@@ -10,6 +10,7 @@ import { getEnemyProperties } from "@/lib/gameUtils";
 // Preload enemy models
 useGLTF.preload('/models/enemy_small.glb');
 useGLTF.preload('/models/enemy_medium.glb');
+useGLTF.preload('/models/enemy_large.glb');
 useGLTF.preload('/models/enemy_boss.glb');
 
 // 敵キャラを3Dモデルに変更
@@ -22,6 +23,7 @@ const Enemy = ({ enemy }: { enemy: any }) => {
   // Load appropriate enemy model based on type
   const smallModel = useGLTF('/models/enemy_small.glb') as GLTF & { scene: THREE.Group };
   const mediumModel = useGLTF('/models/enemy_medium.glb') as GLTF & { scene: THREE.Group };
+  const largeModel = useGLTF('/models/enemy_large.glb') as GLTF & { scene: THREE.Group };
   const bossModel = useGLTF('/models/enemy_boss.glb') as GLTF & { scene: THREE.Group };
   
   // Get the appropriate model based on enemy type
@@ -34,8 +36,7 @@ const Enemy = ({ enemy }: { enemy: any }) => {
       case EnemyType.Boss:
         return bossModel.scene.clone();
       case EnemyType.Large:
-        // Large enemies use the medium model but scaled up
-        return mediumModel.scene.clone();
+        return largeModel.scene.clone();
       default:
         return smallModel.scene.clone();
     }
@@ -43,11 +44,11 @@ const Enemy = ({ enemy }: { enemy: any }) => {
   
   // Update model loaded state
   useEffect(() => {
-    if (smallModel && mediumModel && bossModel) {
+    if (smallModel && mediumModel && largeModel && bossModel) {
       setModelLoaded(true);
       console.log(`Enemy model loaded: ${type}`);
     }
-  }, [smallModel, mediumModel, bossModel, type]);
+  }, [smallModel, mediumModel, largeModel, bossModel, type]);
   
   // Update position based on enemy position
   useFrame(({ clock }) => {

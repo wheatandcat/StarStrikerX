@@ -34,22 +34,49 @@ const Bullet = ({ bullet }: { bullet: any }) => {
   
   return (
     <group>
-      <mesh ref={meshRef} position={[bullet.position[0], bullet.position[1], 0]}>
-        {isPlayerBullet ? (
-          <capsuleGeometry args={[bulletSize / 3, bulletSize, 8, 8]} rotation={[0, 0, Math.PI / 2]} />
-        ) : (
-          <octahedronGeometry args={[bulletSize / 2, 0]} />
-        )}
-        <meshStandardMaterial 
-          color={bulletColor} 
-          emissive={bulletColor} 
-          emissiveIntensity={1}
-          metalness={0.8}
-          roughness={0.2}
-        />
-      </mesh>
+      {/* Player bullets - sleek, energy-based appearance */}
+      {isPlayerBullet ? (
+        <>
+          <mesh 
+            ref={meshRef} 
+            position={[bullet.position[0], bullet.position[1], 0]}
+            rotation={[0, 0, Math.PI / 2]} // Rotate capsule to point horizontally
+          >
+            <capsuleGeometry args={[bulletSize / 3, bulletSize, 8, 16]} />
+            <meshStandardMaterial 
+              color={bulletColor} 
+              emissive={bulletColor} 
+              emissiveIntensity={1.5}
+              metalness={0.9}
+              roughness={0.1}
+              transparent={true}
+              opacity={0.9}
+            />
+          </mesh>
+          
+          {/* Core glow for player bullets */}
+          <mesh position={[bullet.position[0], bullet.position[1], 0]} scale={[0.6, 0.6, 0.6]}>
+            <sphereGeometry args={[bulletSize / 2.5, 8, 8]} />
+            <meshBasicMaterial color={0xffffff} transparent={true} opacity={0.7} />
+          </mesh>
+        </>
+      ) : (
+        /* Enemy bullets - more chaotic, threatening appearance */
+        <mesh ref={meshRef} position={[bullet.position[0], bullet.position[1], 0]}>
+          <dodecahedronGeometry args={[bulletSize / 2, 1]} />
+          <meshStandardMaterial 
+            color={bulletColor} 
+            emissive={bulletColor} 
+            emissiveIntensity={1.5}
+            metalness={0.9}
+            roughness={0.1}
+            transparent={true}
+            opacity={0.9}
+          />
+        </mesh>
+      )}
       
-      {/* Bullet trail light */}
+      {/* Bullet trail light - enhanced */}
       <pointLight 
         ref={trailRef}
         position={[
@@ -57,8 +84,8 @@ const Bullet = ({ bullet }: { bullet: any }) => {
           bullet.position[1] - bullet.direction[1] * 0.2,
           0
         ]}
-        distance={isPlayerBullet ? 1.5 : 1}
-        intensity={isPlayerBullet ? 0.7 : 0.5}
+        distance={isPlayerBullet ? 2 : 1.2}
+        intensity={isPlayerBullet ? 0.9 : 0.6}
         color={isPlayerBullet ? 0x00ffff : 0xff4400}
       />
     </group>

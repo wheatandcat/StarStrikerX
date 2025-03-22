@@ -7,7 +7,7 @@ import { useGradius } from "@/lib/stores/useGradius";
 import { PLAYER_SIZE } from "@/lib/constants";
 
 // Preload player ship model
-useGLTF.preload('/models/player_ship.glb');
+useGLTF.preload('/models/player.glb');
 
 const Player = () => {
   const { playerPosition, isPlayerInvulnerable, weaponLevel } = useGradius();
@@ -16,7 +16,7 @@ const Player = () => {
   const [modelLoaded, setModelLoaded] = useState(false);
   
   // Load player ship model
-  const { scene: playerModel } = useGLTF('/models/player_ship.glb') as GLTF & {
+  const { scene: playerModel } = useGLTF('/models/player.glb') as GLTF & {
     scene: THREE.Group
   };
   
