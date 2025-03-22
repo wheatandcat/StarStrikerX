@@ -129,7 +129,7 @@ const Player = () => {
           color={weaponLevelColor}
           anchorX="center"
           anchorY="middle"
-          font="Press Start 2P"
+          font="monospace"
         >
           {`L${weaponLevel + 1}`}
         </Text>
