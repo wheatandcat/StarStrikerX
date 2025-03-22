@@ -8,15 +8,14 @@ import { WeaponLevel } from '@/lib/types';
 const bossHpStyles = {
   container: {
     position: 'absolute' as 'absolute',
-    top: '15%',
-    left: '50%',
-    transform: 'translateX(-50%)',
-    width: '60%',
-    maxWidth: '400px',
-    borderRadius: '5px',
+    top: '5%',  // 上部に配置
+    right: '2%', // 右寄せに変更
+    width: '30%', // 横幅を小さく
+    maxWidth: '200px',
+    borderRadius: '4px',
     backgroundColor: 'rgba(0, 0, 0, 0.7)',
-    border: '2px solid #ff0066',
-    padding: '8px',
+    border: '1px solid #ff0066',
+    padding: '4px',
     boxShadow: '0 0 10px rgba(255, 0, 102, 0.7)',
     fontFamily: 'Arial, sans-serif',
     color: 'white',
@@ -24,8 +23,8 @@ const bossHpStyles = {
     zIndex: 10
   },
   title: {
-    marginBottom: '5px',
-    fontSize: '0.9rem',
+    marginBottom: '2px',
+    fontSize: '0.7rem',
     fontWeight: 'bold',
     textAlign: 'center' as 'center',
     color: '#ff0066',
@@ -33,10 +32,10 @@ const bossHpStyles = {
   },
   barContainer: {
     width: '100%',
-    height: '15px',
+    height: '10px', // 高さも小さく
     backgroundColor: '#222222',
     border: '1px solid #444444',
-    borderRadius: '3px',
+    borderRadius: '2px',
     overflow: 'hidden'
   },
   barFill: {
@@ -58,7 +57,7 @@ const bossHpStyles = {
   barSubSegments: {
     display: 'flex',
     width: '100%',
-    height: '3px'
+    height: '2px' // 小さく
   },
   barSubSegment: {
     height: '100%',
@@ -66,8 +65,8 @@ const bossHpStyles = {
     borderRight: '1px solid rgba(255, 255, 255, 0.1)'
   },
   percent: {
-    fontSize: '0.7rem',
-    marginTop: '2px',
+    fontSize: '0.6rem',
+    marginTop: '1px',
     textAlign: 'right' as 'right',
     fontWeight: 'bold'
   }
@@ -88,6 +87,9 @@ const GameUI = () => {
   // ボスHPの点滅アニメーション
   const [bossHpFlashing, setBossHpFlashing] = useState(false);
   const [lastBossHealth, setLastBossHealth] = useState(bossHealth);
+  // ボス登場アナウンス表示用
+  const [showBossAnnouncement, setShowBossAnnouncement] = useState(false);
+  const [bossAnnouncementOpacity, setBossAnnouncementOpacity] = useState(0);
   
   // Format score with commas
   const formattedScore = useMemo(() => {
@@ -138,6 +140,41 @@ const GameUI = () => {
       setLastBossHealth(bossHealth);
     }
   }, [bossHealth, bossActive]);
+  
+  // ボス登場アナウンス表示処理
+  useEffect(() => {
+    if (bossActive) {
+      // ボスが初めて登場した時
+      setShowBossAnnouncement(true);
+      
+      // フェードイン
+      let opacity = 0;
+      const fadeInInterval = setInterval(() => {
+        opacity += 0.1;
+        setBossAnnouncementOpacity(opacity);
+        
+        if (opacity >= 1) {
+          clearInterval(fadeInInterval);
+          
+          // 2秒間表示後にフェードアウト開始
+          setTimeout(() => {
+            let fadeOpacity = 1;
+            const fadeOutInterval = setInterval(() => {
+              fadeOpacity -= 0.1;
+              setBossAnnouncementOpacity(fadeOpacity);
+              
+              if (fadeOpacity <= 0) {
+                clearInterval(fadeOutInterval);
+                setShowBossAnnouncement(false);
+              }
+            }, 50);
+          }, 2000);
+        }
+      }, 50);
+    } else {
+      setShowBossAnnouncement(false);
+    }
+  }, [bossActive]);
   
   // ダメージ時にHP表示をアニメーション
   const [animValue, setAnimValue] = useState(0);
@@ -238,6 +275,7 @@ const GameUI = () => {
       
       {/* Boss HP bar - フルスクリーン用HTML */}
       <Html fullscreen>
+        {/* ボス体力表示 */}
         {bossActive && (
           <div style={bossHpStyles.container}>
             <div style={bossHpStyles.title}>
@@ -269,7 +307,43 @@ const GameUI = () => {
             </div>
           </div>
         )}
+        
+        {/* ボス登場アナウンス */}
+        {showBossAnnouncement && (
+          <div style={{
+            position: 'absolute' as 'absolute',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            textAlign: 'center' as 'center',
+            fontFamily: 'Arial, sans-serif',
+            color: '#FF0066',
+            fontSize: '3rem',
+            fontWeight: 'bold',
+            textShadow: '0 0 10px #FF0066, 0 0 20px #FF0066, 0 0 30px #FF0066',
+            opacity: bossAnnouncementOpacity,
+            transition: 'opacity 0.3s ease-in-out',
+            zIndex: 20,
+            animation: 'pulse 1s infinite alternate'
+          }}>
+            <div>WARNING!</div>
+            <div style={{ 
+              fontSize: '2rem', 
+              marginTop: '0.5rem',
+              color: '#FFFFFF'
+            }}>
+              BOSS APPROACHING
+            </div>
+          </div>
+        )}
       </Html>
+      
+      <style>{`
+        @keyframes pulse {
+          from { transform: translate(-50%, -50%) scale(1); }
+          to { transform: translate(-50%, -50%) scale(1.1); }
+        }
+      `}</style>
       
       {/* Controls help at bottom */}
       <Html position={[0, -5.3, 0]} transform center className="game-ui-element">
