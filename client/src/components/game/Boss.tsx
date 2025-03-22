@@ -1,6 +1,8 @@
-import { useRef, useState, useEffect } from "react";
+import { useRef, useState, useEffect, Suspense } from "react";
 import { useFrame } from "@react-three/fiber";
+import { useGLTF } from "@react-three/drei";
 import * as THREE from "three";
+import { GLTF } from "three-stdlib";
 import { useGradius } from "@/lib/stores/useGradius";
 import { BossAttackPattern, EnemyType } from "@/lib/types";
 import { 
@@ -11,6 +13,9 @@ import {
   BOSS_SHOOT_RATE,
   BOSS_PHASE_THRESHOLD
 } from "@/lib/constants";
+
+// Preload the boss model
+useGLTF.preload('/models/enemy_boss.glb');
 
 const Boss = () => {
   const { 
@@ -27,6 +32,22 @@ const Boss = () => {
   const gunRef2 = useRef<THREE.Group>(null);
   const core1Ref = useRef<THREE.Mesh>(null);
   const core2Ref = useRef<THREE.Mesh>(null);
+  
+  // Load boss model
+  const { scene: bossModel } = useGLTF('/models/enemy_boss.glb') as GLTF & {
+    scene: THREE.Group
+  };
+  
+  // Track if model loaded
+  const [modelLoaded, setModelLoaded] = useState(false);
+  
+  // Update model loaded state
+  useEffect(() => {
+    if (bossModel) {
+      setModelLoaded(true);
+      console.log("Boss model loaded successfully");
+    }
+  }, [bossModel]);
   
   const [isEntering, setIsEntering] = useState(true);
   const [currentAttackPattern, setCurrentAttackPattern] = useState<BossAttackPattern>(BossAttackPattern.Straight);
@@ -212,149 +233,74 @@ const Boss = () => {
     <group 
       ref={meshRef} 
       position={[bossPosition[0], bossPosition[1], 0]}
-      scale={2}
+      scale={[3, 3, 3]} // スケールアップ
+      rotation={[0, Math.PI, 0]} // ボスが左向きになるよう回転
     >
-      {/* メインボディ - ドット絵風メカボス */}
-      <group>
-        {/* 中央ボディ - メタリック */}
-        <mesh castShadow>
-          <boxGeometry args={[1.5, 1.2, 0.3]} />
-          <meshStandardMaterial 
-            color={damageColor} 
-            metalness={0.7}
-            roughness={0.2}
-            emissive={damageColor}
-            emissiveIntensity={0.3}
-          />
-        </mesh>
-        
-        {/* トップウイング */}
-        <mesh position={[0, 0.8, 0]}>
-          <boxGeometry args={[1.0, 0.4, 0.2]} />
-          <meshStandardMaterial 
-            color="#555555" 
-            metalness={0.8}
-            roughness={0.4}
-          />
-        </mesh>
-        
-        {/* ボトムウイング */}
-        <mesh position={[0, -0.8, 0]}>
-          <boxGeometry args={[1.0, 0.4, 0.2]} />
-          <meshStandardMaterial 
-            color="#555555" 
-            metalness={0.8}
-            roughness={0.4}
-          />
-        </mesh>
-        
-        {/* 前頭部 - モニター */}
-        <mesh position={[0.8, 0, 0.2]}>
-          <boxGeometry args={[0.3, 0.8, 0.2]} />
-          <meshStandardMaterial 
-            color="#00FFFF" 
-            emissive="#00FFFF"
-            emissiveIntensity={0.5}
-            metalness={0.7}
-            roughness={0.3}
-          />
-        </mesh>
-        
-        {/* コア1 - 赤 (左上) */}
-        <mesh ref={core1Ref} position={[0.3, 0.4, 0.3]}>
-          <boxGeometry args={[0.4, 0.4, 0.2]} />
-          <meshStandardMaterial 
-            color="#FF0000"
-            emissive="#FF0000"
-            emissiveIntensity={0.8}
-            metalness={0.8}
-            roughness={0.2}
-          />
-          <pointLight color="#FF3333" intensity={1} distance={3} />
-        </mesh>
-        
-        {/* コア2 - 青 (右下) */}
-        <mesh ref={core2Ref} position={[0.3, -0.4, 0.3]}>
-          <boxGeometry args={[0.4, 0.4, 0.2]} />
-          <meshStandardMaterial 
-            color="#0088FF"
-            emissive="#0088FF"
-            emissiveIntensity={0.8}
-            metalness={0.8}
-            roughness={0.2}
-          />
-          <pointLight color="#3399FF" intensity={1} distance={3} />
-        </mesh>
-        
-        {/* 装甲プレート - 背面 */}
-        <mesh position={[-0.7, 0, 0]}>
-          <boxGeometry args={[0.3, 1.0, 0.4]} />
-          <meshStandardMaterial 
-            color="#666666" 
-            metalness={0.9} 
-            roughness={0.4} 
-          />
-        </mesh>
-        
-        {/* 左上砲台 */}
-        <group ref={gunRef1} position={[-0.4, 0.6, 0.2]}>
-          <mesh>
-            <boxGeometry args={[0.6, 0.2, 0.2]} />
+      {/* 3Dモデルのボス */}
+      {modelLoaded ? (
+        <Suspense fallback={
+          <mesh castShadow>
+            <boxGeometry args={[1.5, 1.2, 0.3]} />
             <meshStandardMaterial 
-              color="#444444" 
-              metalness={0.9} 
-              roughness={0.2} 
+              color={damageColor} 
+              metalness={0.7}
+              roughness={0.2}
+              emissive={damageColor}
+              emissiveIntensity={0.3}
             />
           </mesh>
-          <mesh position={[-0.35, 0, 0]}>
-            <boxGeometry args={[0.3, 0.15, 0.15]} />
+        }>
+          <primitive object={bossModel.clone()} castShadow receiveShadow />
+        </Suspense>
+      ) : (
+        // フォールバック
+        <group>
+          {/* 中央ボディ - メタリック */}
+          <mesh castShadow>
+            <boxGeometry args={[1.5, 1.2, 0.3]} />
             <meshStandardMaterial 
-              color="#222222" 
-              metalness={0.9} 
-              roughness={0.1} 
+              color={damageColor} 
+              metalness={0.7}
+              roughness={0.2}
+              emissive={damageColor}
+              emissiveIntensity={0.3}
             />
           </mesh>
         </group>
-        
-        {/* 左下砲台 */}
-        <group ref={gunRef2} position={[-0.4, -0.6, 0.2]}>
-          <mesh>
-            <boxGeometry args={[0.6, 0.2, 0.2]} />
-            <meshStandardMaterial 
-              color="#444444" 
-              metalness={0.9} 
-              roughness={0.2} 
-            />
-          </mesh>
-          <mesh position={[-0.35, 0, 0]}>
-            <boxGeometry args={[0.3, 0.15, 0.15]} />
-            <meshStandardMaterial 
-              color="#222222" 
-              metalness={0.9} 
-              roughness={0.1} 
-            />
-          </mesh>
-        </group>
-        
-        {/* 追加装飾 - 上部アンテナ */}
-        <mesh position={[0, 0.5, 0.4]}>
-          <boxGeometry args={[0.1, 0.3, 0.1]} />
-          <meshStandardMaterial color="#999999" />
-        </mesh>
-        
-        {/* 追加装飾 - 下部スラスター */}
-        <mesh position={[-0.6, 0, -0.2]}>
-          <boxGeometry args={[0.2, 0.6, 0.2]} />
-          <meshStandardMaterial 
-            color="#FF6600" 
-            emissive="#FF6600"
-            emissiveIntensity={0.6}
-          />
-        </mesh>
-      </group>
+      )}
+      
+      {/* コア1 - 赤 (左上) - エフェクトのみ残す */}
+      <mesh ref={core1Ref} position={[0.3, 0.4, 0.3]} visible={false}>
+        <boxGeometry args={[0.4, 0.4, 0.2]} />
+        <meshStandardMaterial 
+          color="#FF0000"
+          emissive="#FF0000"
+          emissiveIntensity={0.8}
+        />
+        <pointLight color="#FF3333" intensity={1} distance={3} />
+      </mesh>
+      
+      {/* コア2 - 青 (右下) - エフェクトのみ残す */}
+      <mesh ref={core2Ref} position={[0.3, -0.4, 0.3]} visible={false}>
+        <boxGeometry args={[0.4, 0.4, 0.2]} />
+        <meshStandardMaterial 
+          color="#0088FF"
+          emissive="#0088FF"
+          emissiveIntensity={0.8}
+        />
+        <pointLight color="#3399FF" intensity={1} distance={3} />
+      </mesh>
+      
+      {/* 全体のライトエフェクト - ダメージに応じた色 */}
+      <pointLight 
+        position={[0, 0, 0.5]} 
+        color={damageColor} 
+        intensity={1 + (1 - healthPercent) * 2} 
+        distance={5}
+      />
       
       {/* Health bar */}
-      <group position={[0, 1.5, 0]}>
+      <group position={[0, 1.8, 0]} rotation={[0, Math.PI, 0]}>
         <mesh position={[0, 0, 0]}>
           <boxGeometry args={[2, 0.15, 0.05]} />
           <meshBasicMaterial color={0x333333} />

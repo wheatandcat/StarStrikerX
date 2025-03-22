@@ -1,14 +1,32 @@
-import { useRef } from "react";
+import { useRef, useState, useEffect, Suspense } from "react";
 import { useFrame } from "@react-three/fiber";
+import { useGLTF, Text } from "@react-three/drei";
 import * as THREE from "three";
-import { Text } from "@react-three/drei";
+import { GLTF } from "three-stdlib";
 import { useGradius } from "@/lib/stores/useGradius";
 import { PowerUpType } from "@/lib/types";
 import { POWERUP_SIZE } from "@/lib/constants";
 
+// Preload the powerup model
+useGLTF.preload('/models/powerup.glb');
+
 const PowerUp = ({ powerUp }: { powerUp: any }) => {
-  const meshRef = useRef<THREE.Mesh>(null);
+  const groupRef = useRef<THREE.Group>(null);
   const glowRef = useRef<THREE.PointLight>(null);
+  const [modelLoaded, setModelLoaded] = useState(false);
+  
+  // Load power-up model
+  const { scene: powerupModel } = useGLTF('/models/powerup.glb') as GLTF & {
+    scene: THREE.Group
+  };
+  
+  // Update model loaded state
+  useEffect(() => {
+    if (powerupModel) {
+      setModelLoaded(true);
+      console.log("Power-up model loaded successfully");
+    }
+  }, [powerupModel]);
   
   // Different styles for different power-up types
   let color = 0xffff00; // Default yellow
@@ -21,46 +39,61 @@ const PowerUp = ({ powerUp }: { powerUp: any }) => {
   
   // Update power-up position and add hover/rotation effects
   useFrame(({ clock }) => {
-    if (!meshRef.current || !glowRef.current) return;
+    if (!groupRef.current || !glowRef.current) return;
     
     // Update position from power-up state
-    meshRef.current.position.x = powerUp.position[0];
-    meshRef.current.position.y = powerUp.position[1];
+    groupRef.current.position.x = powerUp.position[0];
+    groupRef.current.position.y = powerUp.position[1];
     
     // Update glow position
     glowRef.current.position.x = powerUp.position[0];
     glowRef.current.position.y = powerUp.position[1];
     
     // Hover effect
-    meshRef.current.position.y += Math.sin(clock.getElapsedTime() * 4) * 0.01;
+    groupRef.current.position.y += Math.sin(clock.getElapsedTime() * 4) * 0.01;
     
     // Rotation effect
-    meshRef.current.rotation.z += 0.02;
+    groupRef.current.rotation.z += 0.02;
   });
   
   return (
     <group>
-      <mesh 
-        ref={meshRef} 
+      <group 
+        ref={groupRef} 
         position={[powerUp.position[0], powerUp.position[1], 0]}
-        castShadow
+        scale={[POWERUP_SIZE * 2.5, POWERUP_SIZE * 2.5, POWERUP_SIZE * 2.5]}
+        rotation={[0, 0, 0]}
       >
-        <boxGeometry args={[POWERUP_SIZE, POWERUP_SIZE, POWERUP_SIZE / 2]} />
-        <meshStandardMaterial 
-          color={color} 
-          emissive={color} 
-          emissiveIntensity={0.5}
-          metalness={0.7}
-          roughness={0.3}
-          transparent
-          opacity={0.9}
-        />
+        {/* 3Dモデルのパワーアップ */}
+        {modelLoaded ? (
+          <Suspense fallback={
+            <mesh castShadow>
+              <boxGeometry args={[0.5, 0.5, 0.25]} />
+              <meshStandardMaterial 
+                color={color} 
+                emissive={color} 
+                emissiveIntensity={0.5}
+              />
+            </mesh>
+          }>
+            <primitive object={powerupModel.clone()} castShadow receiveShadow />
+          </Suspense>
+        ) : (
+          <mesh castShadow>
+            <boxGeometry args={[0.5, 0.5, 0.25]} />
+            <meshStandardMaterial 
+              color={color} 
+              emissive={color} 
+              emissiveIntensity={0.5}
+            />
+          </mesh>
+        )}
         
-        {/* Label */}
+        {/* パワーアップタイプのラベル */}
         <Text
-          position={[0, 0, 0.2]}
+          position={[0, 0, 0.5]}
           rotation={[0, 0, 0]}
-          fontSize={POWERUP_SIZE * 0.6}
+          fontSize={0.4}
           color="#ffffff"
           anchorX="center"
           anchorY="middle"
@@ -68,15 +101,15 @@ const PowerUp = ({ powerUp }: { powerUp: any }) => {
         >
           {label}
         </Text>
-      </mesh>
+      </group>
       
       {/* Glow effect */}
       <pointLight 
         ref={glowRef}
         position={[powerUp.position[0], powerUp.position[1], 0]} 
         color={color} 
-        intensity={1} 
-        distance={2}
+        intensity={1.5} 
+        distance={3}
       />
     </group>
   );
