@@ -7,7 +7,7 @@ import { WeaponLevel } from '@/lib/types';
 // ボスのHP表示用のスタイル
 const bossHpStyles = {
   container: {
-    position: 'absolute',
+    position: 'absolute' as 'absolute',
     top: '15%',
     left: '50%',
     transform: 'translateX(-50%)',
@@ -20,14 +20,14 @@ const bossHpStyles = {
     boxShadow: '0 0 10px rgba(255, 0, 102, 0.7)',
     fontFamily: 'Arial, sans-serif',
     color: 'white',
-    textAlign: 'center',
+    textAlign: 'center' as 'center',
     zIndex: 10
   },
   title: {
     marginBottom: '5px',
     fontSize: '0.9rem',
     fontWeight: 'bold',
-    textAlign: 'center',
+    textAlign: 'center' as 'center',
     color: '#ff0066',
     textShadow: '0 0 5px rgba(255, 0, 102, 0.7)'
   },
@@ -68,7 +68,7 @@ const bossHpStyles = {
   percent: {
     fontSize: '0.7rem',
     marginTop: '2px',
-    textAlign: 'right',
+    textAlign: 'right' as 'right',
     fontWeight: 'bold'
   }
 };
@@ -151,7 +151,7 @@ const GameUI = () => {
   });
   
   // バーセグメント生成
-  const renderSegments = (count) => {
+  const renderSegments = (count: number) => {
     return Array.from({ length: count }).map((_, i) => (
       <div 
         key={i} 
@@ -164,7 +164,7 @@ const GameUI = () => {
   };
   
   // サブセグメント生成
-  const renderSubSegments = (count) => {
+  const renderSubSegments = (count: number) => {
     return Array.from({ length: count }).map((_, i) => (
       <div 
         key={i} 

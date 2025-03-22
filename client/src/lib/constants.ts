@@ -63,7 +63,7 @@ export const BOSS_ENTRY_POSITION = [12, 0];
 export const BOSS_BATTLE_POSITION = [8, 0];
 export const BOSS_MOVEMENT_RANGE = 3;
 export const BOSS_MOVEMENT_SPEED = 0.02;
-export const BOSS_SHOOT_RATE = 1000; // ms
+export const BOSS_SHOOT_RATE = 1500; // ms - 遅くした
 export const BOSS_PHASE_THRESHOLD = 0.5; // Boss changes pattern at 50% health
 
 // Game progress constants
