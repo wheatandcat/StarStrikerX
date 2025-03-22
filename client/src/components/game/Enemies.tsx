@@ -5,76 +5,207 @@ import { useGradius } from "@/lib/stores/useGradius";
 import { EnemyType } from "@/lib/types";
 import { getEnemyProperties } from "@/lib/gameUtils";
 
-// Create enemy meshes based on enemy type
+// 敵キャラをドット絵風メカデザインに変更
 const Enemy = ({ enemy }: { enemy: any }) => {
-  const meshRef = useRef<THREE.Mesh>(null);
+  const groupRef = useRef<THREE.Group>(null);
   const type = enemy.type as EnemyType;
   const properties = getEnemyProperties(type);
   
-  // Different enemy styles based on type
-  let geometry, material;
-  
-  switch (type) {
-    case EnemyType.Small:
-      geometry = <octahedronGeometry args={[properties.size / 2, 0]} />;
-      material = <meshStandardMaterial color={0xff6666} emissive={0xcc0000} emissiveIntensity={0.5} />;
-      break;
-      
-    case EnemyType.Medium:
-      geometry = <dodecahedronGeometry args={[properties.size / 2, 0]} />;
-      material = <meshStandardMaterial color={0xff9900} emissive={0xcc6600} emissiveIntensity={0.6} />;
-      break;
-      
-    case EnemyType.Large:
-      geometry = <icosahedronGeometry args={[properties.size / 2, 0]} />;
-      material = <meshStandardMaterial color={0xcc00cc} emissive={0x990099} emissiveIntensity={0.7} />;
-      break;
-      
-    default:
-      geometry = <sphereGeometry args={[properties.size / 2, 8, 8]} />;
-      material = <meshStandardMaterial color={0xff0000} />;
-  }
-  
-  // Update mesh position based on enemy position
-  useFrame(() => {
-    if (!meshRef.current) return;
+  // Update position based on enemy position
+  useFrame(({ clock }) => {
+    if (!groupRef.current) return;
     
     // Update position from the enemy state
-    meshRef.current.position.x = enemy.position[0];
-    meshRef.current.position.y = enemy.position[1];
+    groupRef.current.position.x = enemy.position[0];
+    groupRef.current.position.y = enemy.position[1];
     
-    // Rotation effect
-    meshRef.current.rotation.z += 0.02;
-    meshRef.current.rotation.y += 0.01;
+    // 敵タイプに応じた動きのパターン
+    const time = clock.getElapsedTime();
+    
+    if (type === EnemyType.Small) {
+      // Small enemy: 小さく揺れる
+      groupRef.current.rotation.z = Math.sin(time * 3) * 0.1;
+    } else if (type === EnemyType.Medium) {
+      // Medium enemy: 回転
+      groupRef.current.rotation.z += 0.02;
+    } else if (type === EnemyType.Large) {
+      // Large enemy: ゆっくりとしたパルス
+      const pulse = 0.95 + Math.sin(time * 1.5) * 0.05;
+      groupRef.current.scale.set(pulse, pulse, pulse);
+    }
   });
   
-  return (
-    <mesh ref={meshRef} position={[enemy.position[0], enemy.position[1], 0]} castShadow>
-      {geometry}
-      {material}
-      
-      {/* Add details based on enemy type */}
-      {type === EnemyType.Medium && (
-        <group>
-          <mesh position={[0, 0, 0.4]}>
-            <sphereGeometry args={[0.15, 8, 8]} />
-            <meshStandardMaterial color={0xffcc00} />
+  // 敵のサイズに基づいてスケールを調整
+  const scale = properties.size;
+  
+  // 敵タイプごとの異なるデザイン
+  switch (type) {
+    case EnemyType.Small:
+      // 小型敵 - 小型の円形メカドット風
+      return (
+        <group 
+          ref={groupRef} 
+          position={[enemy.position[0], enemy.position[1], 0]}
+          scale={[scale, scale, scale]}
+        >
+          {/* 中央ボディ - 赤 */}
+          <mesh castShadow>
+            <boxGeometry args={[0.5, 0.5, 0.2]} />
+            <meshStandardMaterial color="#FF0000" />
           </mesh>
-          <pointLight position={[0, 0, 0.6]} color={0xffcc00} intensity={0.5} distance={1.5} />
-        </group>
-      )}
-      
-      {type === EnemyType.Large && (
-        <group>
-          <mesh position={[0, 0, 0.5]}>
-            <torusGeometry args={[0.3, 0.05, 16, 16]} />
-            <meshStandardMaterial color={0xff00ff} emissive={0xff00ff} emissiveIntensity={0.5} />
+          
+          {/* 目/センサー - 黄色 */}
+          <mesh position={[0, 0, 0.15]}>
+            <boxGeometry args={[0.2, 0.2, 0.1]} />
+            <meshStandardMaterial 
+              color="#FFFF00" 
+              emissive="#FFFF00"
+              emissiveIntensity={0.5}
+            />
           </mesh>
-          <pointLight position={[0, 0, 0]} color={0xff00ff} intensity={0.8} distance={2} />
+          
+          {/* 中央サーキュラーパーツ */}
+          <mesh position={[0, 0, -0.1]}>
+            <boxGeometry args={[0.3, 0.3, 0.1]} />
+            <meshStandardMaterial color="#555555" />
+          </mesh>
+          
+          {/* 光エフェクト */}
+          <pointLight position={[0, 0, 0.3]} color="#FFFF00" intensity={0.5} distance={1} />
         </group>
-      )}
-    </mesh>
-  );
+      );
+      
+    case EnemyType.Medium:
+      // 中型敵 - 六角形メカドット風
+      return (
+        <group 
+          ref={groupRef} 
+          position={[enemy.position[0], enemy.position[1], 0]}
+          scale={[scale, scale, scale]}
+        >
+          {/* 中央ボディ - オレンジ */}
+          <mesh castShadow>
+            <boxGeometry args={[0.6, 0.6, 0.2]} />
+            <meshStandardMaterial color="#FF6600" />
+          </mesh>
+          
+          {/* 上部ウィング */}
+          <mesh position={[0, 0.4, 0]}>
+            <boxGeometry args={[0.4, 0.2, 0.1]} />
+            <meshStandardMaterial color="#994400" />
+          </mesh>
+          
+          {/* 下部ウィング */}
+          <mesh position={[0, -0.4, 0]}>
+            <boxGeometry args={[0.4, 0.2, 0.1]} />
+            <meshStandardMaterial color="#994400" />
+          </mesh>
+          
+          {/* 中央コア - 黄色 */}
+          <mesh position={[0, 0, 0.2]}>
+            <boxGeometry args={[0.3, 0.3, 0.1]} />
+            <meshStandardMaterial 
+              color="#FFAA00" 
+              emissive="#FFAA00"
+              emissiveIntensity={0.6}
+            />
+          </mesh>
+          
+          {/* 砲台 1 */}
+          <mesh position={[-0.2, 0.2, 0.1]}>
+            <boxGeometry args={[0.1, 0.1, 0.2]} />
+            <meshStandardMaterial color="#333333" />
+          </mesh>
+          
+          {/* 砲台 2 */}
+          <mesh position={[-0.2, -0.2, 0.1]}>
+            <boxGeometry args={[0.1, 0.1, 0.2]} />
+            <meshStandardMaterial color="#333333" />
+          </mesh>
+          
+          {/* 光エフェクト */}
+          <pointLight position={[0, 0, 0.4]} color="#FFAA00" intensity={0.7} distance={1.5} />
+        </group>
+      );
+      
+    case EnemyType.Large:
+      // 大型敵 - 大型メカドット風
+      return (
+        <group 
+          ref={groupRef} 
+          position={[enemy.position[0], enemy.position[1], 0]}
+          scale={[scale, scale, scale]}
+        >
+          {/* メインボディ - 紫 */}
+          <mesh castShadow>
+            <boxGeometry args={[0.8, 0.6, 0.3]} />
+            <meshStandardMaterial color="#9900CC" />
+          </mesh>
+          
+          {/* 上部構造物 */}
+          <mesh position={[0, 0.4, 0]}>
+            <boxGeometry args={[0.6, 0.2, 0.1]} />
+            <meshStandardMaterial color="#6600AA" />
+          </mesh>
+          
+          {/* 下部構造物 */}
+          <mesh position={[0, -0.4, 0]}>
+            <boxGeometry args={[0.6, 0.2, 0.1]} />
+            <meshStandardMaterial color="#6600AA" />
+          </mesh>
+          
+          {/* 中央コア - 明るい紫 */}
+          <mesh position={[0, 0, 0.2]}>
+            <boxGeometry args={[0.4, 0.3, 0.1]} />
+            <meshStandardMaterial 
+              color="#DD00FF" 
+              emissive="#DD00FF"
+              emissiveIntensity={0.7}
+            />
+          </mesh>
+          
+          {/* 左砲台 */}
+          <mesh position={[-0.3, 0.2, 0.2]}>
+            <boxGeometry args={[0.2, 0.1, 0.2]} />
+            <meshStandardMaterial color="#333333" />
+          </mesh>
+          
+          {/* 右砲台 */}
+          <mesh position={[-0.3, -0.2, 0.2]}>
+            <boxGeometry args={[0.2, 0.1, 0.2]} />
+            <meshStandardMaterial color="#333333" />
+          </mesh>
+          
+          {/* 後部エンジン */}
+          <mesh position={[0.4, 0, 0.1]}>
+            <boxGeometry args={[0.1, 0.3, 0.2]} />
+            <meshStandardMaterial 
+              color="#FF00FF" 
+              emissive="#FF00FF"
+              emissiveIntensity={0.5}
+            />
+          </mesh>
+          
+          {/* 光エフェクト */}
+          <pointLight position={[0, 0, 0.5]} color="#FF00FF" intensity={0.8} distance={2} />
+        </group>
+      );
+      
+    default:
+      // デフォルト (念のため)
+      return (
+        <group 
+          ref={groupRef} 
+          position={[enemy.position[0], enemy.position[1], 0]}
+          scale={[scale, scale, scale]}
+        >
+          <mesh castShadow>
+            <boxGeometry args={[0.5, 0.5, 0.2]} />
+            <meshStandardMaterial color="#FF0000" />
+          </mesh>
+        </group>
+      );
+  }
 };
 
 const Enemies = () => {

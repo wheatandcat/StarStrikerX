@@ -214,61 +214,144 @@ const Boss = () => {
       position={[bossPosition[0], bossPosition[1], 0]}
       scale={2}
     >
-      {/* Main body */}
-      <mesh castShadow>
-        <sphereGeometry args={[1, 16, 16]} />
-        <meshStandardMaterial 
-          color={damageColor} 
-          metalness={0.7}
-          roughness={0.2}
-          emissive={damageColor}
-          emissiveIntensity={0.3}
-        />
-        
-        {/* Core 1 */}
-        <mesh ref={core1Ref} position={[0.3, 0.3, 0.3]}>
-          <sphereGeometry args={[0.3, 12, 12]} />
+      {/* メインボディ - ドット絵風メカボス */}
+      <group>
+        {/* 中央ボディ - メタリック */}
+        <mesh castShadow>
+          <boxGeometry args={[1.5, 1.2, 0.3]} />
           <meshStandardMaterial 
-            color={0xff0000}
-            emissive={0xff0000}
+            color={damageColor} 
+            metalness={0.7}
+            roughness={0.2}
+            emissive={damageColor}
+            emissiveIntensity={0.3}
+          />
+        </mesh>
+        
+        {/* トップウイング */}
+        <mesh position={[0, 0.8, 0]}>
+          <boxGeometry args={[1.0, 0.4, 0.2]} />
+          <meshStandardMaterial 
+            color="#555555" 
+            metalness={0.8}
+            roughness={0.4}
+          />
+        </mesh>
+        
+        {/* ボトムウイング */}
+        <mesh position={[0, -0.8, 0]}>
+          <boxGeometry args={[1.0, 0.4, 0.2]} />
+          <meshStandardMaterial 
+            color="#555555" 
+            metalness={0.8}
+            roughness={0.4}
+          />
+        </mesh>
+        
+        {/* 前頭部 - モニター */}
+        <mesh position={[0.8, 0, 0.2]}>
+          <boxGeometry args={[0.3, 0.8, 0.2]} />
+          <meshStandardMaterial 
+            color="#00FFFF" 
+            emissive="#00FFFF"
+            emissiveIntensity={0.5}
+            metalness={0.7}
+            roughness={0.3}
+          />
+        </mesh>
+        
+        {/* コア1 - 赤 (左上) */}
+        <mesh ref={core1Ref} position={[0.3, 0.4, 0.3]}>
+          <boxGeometry args={[0.4, 0.4, 0.2]} />
+          <meshStandardMaterial 
+            color="#FF0000"
+            emissive="#FF0000"
             emissiveIntensity={0.8}
             metalness={0.8}
             roughness={0.2}
           />
-          <pointLight color={0xff3333} intensity={1} distance={3} />
+          <pointLight color="#FF3333" intensity={1} distance={3} />
         </mesh>
         
-        {/* Core 2 */}
-        <mesh ref={core2Ref} position={[0.3, -0.3, 0.3]}>
-          <sphereGeometry args={[0.3, 12, 12]} />
+        {/* コア2 - 青 (右下) */}
+        <mesh ref={core2Ref} position={[0.3, -0.4, 0.3]}>
+          <boxGeometry args={[0.4, 0.4, 0.2]} />
           <meshStandardMaterial 
-            color={0x0088ff}
-            emissive={0x0088ff}
+            color="#0088FF"
+            emissive="#0088FF"
             emissiveIntensity={0.8}
             metalness={0.8}
             roughness={0.2}
           />
-          <pointLight color={0x3399ff} intensity={1} distance={3} />
+          <pointLight color="#3399FF" intensity={1} distance={3} />
         </mesh>
         
-        {/* Armor plates */}
-        <mesh position={[0, 0, -0.4]}>
-          <cylinderGeometry args={[0.8, 0.8, 0.2, 8]} />
-          <meshStandardMaterial color={0x666666} metalness={0.9} roughness={0.4} />
+        {/* 装甲プレート - 背面 */}
+        <mesh position={[-0.7, 0, 0]}>
+          <boxGeometry args={[0.3, 1.0, 0.4]} />
+          <meshStandardMaterial 
+            color="#666666" 
+            metalness={0.9} 
+            roughness={0.4} 
+          />
         </mesh>
         
-        {/* Gun 1 */}
-        <mesh ref={gunRef1} position={[-0.6, 0.6, 0]}>
-          <cylinderGeometry args={[0.1, 0.15, 0.8, 8]} rotation={[0, 0, Math.PI / 2]} />
-          <meshStandardMaterial color={0x444444} metalness={0.9} roughness={0.2} />
+        {/* 左上砲台 */}
+        <group ref={gunRef1} position={[-0.4, 0.6, 0.2]}>
+          <mesh>
+            <boxGeometry args={[0.6, 0.2, 0.2]} />
+            <meshStandardMaterial 
+              color="#444444" 
+              metalness={0.9} 
+              roughness={0.2} 
+            />
+          </mesh>
+          <mesh position={[-0.35, 0, 0]}>
+            <boxGeometry args={[0.3, 0.15, 0.15]} />
+            <meshStandardMaterial 
+              color="#222222" 
+              metalness={0.9} 
+              roughness={0.1} 
+            />
+          </mesh>
+        </group>
+        
+        {/* 左下砲台 */}
+        <group ref={gunRef2} position={[-0.4, -0.6, 0.2]}>
+          <mesh>
+            <boxGeometry args={[0.6, 0.2, 0.2]} />
+            <meshStandardMaterial 
+              color="#444444" 
+              metalness={0.9} 
+              roughness={0.2} 
+            />
+          </mesh>
+          <mesh position={[-0.35, 0, 0]}>
+            <boxGeometry args={[0.3, 0.15, 0.15]} />
+            <meshStandardMaterial 
+              color="#222222" 
+              metalness={0.9} 
+              roughness={0.1} 
+            />
+          </mesh>
+        </group>
+        
+        {/* 追加装飾 - 上部アンテナ */}
+        <mesh position={[0, 0.5, 0.4]}>
+          <boxGeometry args={[0.1, 0.3, 0.1]} />
+          <meshStandardMaterial color="#999999" />
         </mesh>
         
-        {/* Gun 2 */}
-        <mesh ref={gunRef2} position={[-0.6, -0.6, 0]}>
-          <cylinderGeometry args={[0.1, 0.15, 0.8, 8]} rotation={[0, 0, Math.PI / 2]} />
-          <meshStandardMaterial color={0x444444} metalness={0.9} roughness={0.2} />
+        {/* 追加装飾 - 下部スラスター */}
+        <mesh position={[-0.6, 0, -0.2]}>
+          <boxGeometry args={[0.2, 0.6, 0.2]} />
+          <meshStandardMaterial 
+            color="#FF6600" 
+            emissive="#FF6600"
+            emissiveIntensity={0.6}
+          />
         </mesh>
-      </mesh>
+      </group>
       
       {/* Health bar */}
       <group position={[0, 1.5, 0]}>
