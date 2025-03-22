@@ -39,6 +39,10 @@ function App() {
   } = useGradius();
   const [bgMusic, setBgMusic] = useState<HTMLAudioElement | null>(null);
   const { toggleMute, isMuted, setBackgroundMusic } = useAudio();
+  const [viewport, setViewport] = useState({
+    fov: 60,
+    aspectRatio: window.innerWidth / window.innerHeight,
+  });
 
   // Load and setup audio
   useEffect(() => {
@@ -72,6 +76,41 @@ function App() {
       bgMusic.pause();
     }
   }, [bgMusic, gamePhase, isMuted]);
+  
+  // Handle window resize to update viewport
+  useEffect(() => {
+    const handleResize = () => {
+      const aspectRatio = window.innerWidth / window.innerHeight;
+      
+      // Adjust FOV based on aspect ratio - wider screens get lower FOV to show more vertical space
+      let newFov = 60; // default FOV
+      
+      if (aspectRatio < 1) { // portrait mode
+        newFov = 90; // increase FOV to show more of the game area
+      } else if (aspectRatio > 2) { // very wide screen
+        newFov = 50; // lower FOV to prevent horizontal stretching
+      } else {
+        // Scale FOV inversely with aspect ratio between 1 and 2
+        newFov = 70 - (aspectRatio - 1) * 20;
+      }
+      
+      console.log(`Window resized: ${window.innerWidth}x${window.innerHeight}, AR: ${aspectRatio.toFixed(2)}, FOV: ${newFov.toFixed(1)}`);
+      
+      setViewport({
+        fov: newFov,
+        aspectRatio
+      });
+    };
+    
+    // Initial calculation
+    handleResize();
+    
+    // Add event listener
+    window.addEventListener("resize", handleResize);
+    
+    // Cleanup
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   return (
     <QueryClientProvider client={queryClient}>
@@ -90,7 +129,7 @@ function App() {
             shadows
             camera={{
               position: [0, 0, 15],
-              fov: 60,
+              fov: viewport.fov,
               near: 0.1,
               far: 1000
             }}
@@ -108,7 +147,7 @@ function App() {
             />
             
             <Suspense fallback={null}>
-              {gamePhase === "playing" && <Level />}
+              {gamePhase === "playing" && <Level viewport={viewport} />}
             </Suspense>
           </Canvas>
           

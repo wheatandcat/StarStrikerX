@@ -36,7 +36,14 @@ import {
   shouldDropPowerUp
 } from "@/lib/gameUtils";
 
-const Level = () => {
+interface LevelProps {
+  viewport: {
+    fov: number;
+    aspectRatio: number;
+  };
+}
+
+const Level: React.FC<LevelProps> = ({ viewport: canvasViewport }) => {
   // Game state from store
   const { 
     playerPosition, 
