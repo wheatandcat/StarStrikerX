@@ -7,18 +7,8 @@ import { PLAYER_SIZE } from "@/lib/constants";
 
 const Player = () => {
   const { playerPosition, isPlayerInvulnerable, weaponLevel } = useGradius();
-  const playerRef = useRef<THREE.Mesh>(null);
+  const playerRef = useRef<THREE.Group>(null);
   const engineGlowRef = useRef<THREE.PointLight>(null);
-  
-  // Create a simple ship geometry
-  const shipGeometry = useMemo(() => new THREE.BoxGeometry(1, 0.4, 0.2), []);
-  const shipMaterial = useMemo(() => new THREE.MeshStandardMaterial({
-    color: 0x3399ff,
-    metalness: 0.8,
-    roughness: 0.2,
-    emissive: 0x0066cc,
-    emissiveIntensity: 0.5
-  }), []);
   
   // For blinking when invulnerable
   useFrame((state) => {
@@ -55,66 +45,95 @@ const Player = () => {
   }, [weaponLevel]);
   
   return (
-    <group>
-      {/* Main ship body */}
-      <mesh 
-        ref={playerRef} 
-        geometry={shipGeometry} 
-        material={shipMaterial}
-        position={[playerPosition[0], playerPosition[1], 0]} 
-        castShadow
-      >
-        {/* Ship nose/cockpit */}
-        <mesh position={[0.4, 0, 0.1]}>
-          <sphereGeometry args={[0.2, 8, 8]} />
-          <meshStandardMaterial 
-            color={0x99ccff} 
-            transparent
-            opacity={0.8}
-            metalness={0.9}
-            roughness={0.1}
-          />
-        </mesh>
-        
-        {/* Wing top */}
-        <mesh position={[0, 0.3, 0]}>
-          <boxGeometry args={[0.8, 0.1, 0.05]} />
-          <meshStandardMaterial color={0x2266aa} />
-        </mesh>
-        
-        {/* Wing bottom */}
-        <mesh position={[0, -0.3, 0]}>
-          <boxGeometry args={[0.8, 0.1, 0.05]} />
-          <meshStandardMaterial color={0x2266aa} />
-        </mesh>
-        
-        {/* Engine */}
-        <mesh position={[-0.5, 0, 0]}>
-          <cylinderGeometry args={[0.12, 0.2, 0.3, 6]} rotation={[0, 0, Math.PI / 2]} />
-          <meshStandardMaterial color={0x222222} />
-        </mesh>
-        
-        {/* Engine glow */}
-        <pointLight 
-          ref={engineGlowRef}
-          position={[-0.7, 0, 0]} 
-          intensity={1} 
-          distance={2} 
-          color={0x00aaff}
+    <group
+      ref={playerRef}
+      position={[playerPosition[0], playerPosition[1], 0]}
+      scale={[PLAYER_SIZE, PLAYER_SIZE, PLAYER_SIZE]}
+    >
+      {/* 本体中央 - メインボディ (白) */}
+      <mesh castShadow>
+        <boxGeometry args={[0.6, 0.3, 0.1]} />
+        <meshStandardMaterial color="#FFFFFF" />
+      </mesh>
+      
+      {/* 本体前部 - 先端 (赤) */}
+      <mesh position={[0.35, 0, 0]}>
+        <boxGeometry args={[0.1, 0.2, 0.1]} />
+        <meshStandardMaterial color="#FF0000" />
+      </mesh>
+      
+      {/* 上部翼 (白) */}
+      <mesh position={[0, 0.2, 0]}>
+        <boxGeometry args={[0.4, 0.1, 0.1]} />
+        <meshStandardMaterial color="#FFFFFF" />
+      </mesh>
+      
+      {/* 下部翼 (白) */}
+      <mesh position={[0, -0.2, 0]}>
+        <boxGeometry args={[0.4, 0.1, 0.1]} />
+        <meshStandardMaterial color="#FFFFFF" />
+      </mesh>
+      
+      {/* 翼端部 上 (赤) */}
+      <mesh position={[0, 0.3, 0]}>
+        <boxGeometry args={[0.2, 0.1, 0.1]} />
+        <meshStandardMaterial color="#FF0000" />
+      </mesh>
+      
+      {/* 翼端部 下 (赤) */}
+      <mesh position={[0, -0.3, 0]}>
+        <boxGeometry args={[0.2, 0.1, 0.1]} />
+        <meshStandardMaterial color="#FF0000" />
+      </mesh>
+      
+      {/* コックピット (青) */}
+      <mesh position={[0.15, 0, 0.1]}>
+        <boxGeometry args={[0.2, 0.15, 0.05]} />
+        <meshStandardMaterial color="#00AAFF" />
+      </mesh>
+      
+      {/* エンジン部分 (グレー) */}
+      <mesh position={[-0.35, 0, 0]}>
+        <boxGeometry args={[0.1, 0.2, 0.1]} />
+        <meshStandardMaterial color="#444444" />
+      </mesh>
+      
+      {/* エンジン光 */}
+      <mesh position={[-0.45, 0, 0]}>
+        <boxGeometry args={[0.05, 0.15, 0.05]} />
+        <meshStandardMaterial 
+          color="#00FFFF" 
+          emissive="#00FFFF"
+          emissiveIntensity={2}
         />
-        
-        {/* Weapon level indicator */}
+      </mesh>
+      
+      {/* エンジン光エフェクト */}
+      <pointLight 
+        ref={engineGlowRef}
+        position={[-0.5, 0, 0]} 
+        intensity={1.5} 
+        distance={2} 
+        color="#00FFFF"
+      />
+      
+      {/* 武器レベルインジケーター */}
+      <group position={[0, 0.5, 0]}>
+        <mesh>
+          <boxGeometry args={[0.3, 0.1, 0.05]} />
+          <meshBasicMaterial color="#333333" />
+        </mesh>
         <Text
-          position={[0, 0.6, 0]}
-          rotation={[0, 0, 0]}
-          fontSize={0.2}
+          position={[0, 0, 0.1]}
+          fontSize={0.15}
           color={weaponLevelColor}
           anchorX="center"
           anchorY="middle"
+          font="Press Start 2P"
         >
           {`L${weaponLevel + 1}`}
         </Text>
-      </mesh>
+      </group>
     </group>
   );
 };
