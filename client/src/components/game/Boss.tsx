@@ -213,187 +213,327 @@ const Boss = () => {
       scale={[2, 2, 1]} // 適切なスケール
       rotation={[0, 0, 0]} 
     >
-      {/* SFC風のボス - 詳細な2D形状 */}
+      {/* R-Type/グラディウス/ダライアス風のメカニカルボス */}
       <group>
-        {/* メインボディ - 複雑な形状 */}
+        {/* メインボディ - 機械的な六角形に近い複雑形状 */}
         <mesh>
           <shapeGeometry args={[new THREE.Shape()
-            .moveTo(0.8, 0) // 前部先端
-            .lineTo(0.6, 0.4) // 上部前方
-            .lineTo(-0.6, 0.6) // 上部後方
-            .lineTo(-0.8, 0) // 後部
-            .lineTo(-0.6, -0.6) // 下部後方
-            .lineTo(0.6, -0.4) // 下部前方
-            .lineTo(0.8, 0) // 前部先端に戻る
+            .moveTo(0.7, 0) // 前部先端
+            .lineTo(0.6, 0.3) // 上部前方
+            .lineTo(0.3, 0.5) // 上部中央
+            .lineTo(-0.4, 0.6) // 上部後方
+            .lineTo(-0.8, 0.3) // 後部上
+            .lineTo(-0.9, 0) // 後部
+            .lineTo(-0.8, -0.3) // 後部下
+            .lineTo(-0.4, -0.6) // 下部後方
+            .lineTo(0.3, -0.5) // 下部中央
+            .lineTo(0.6, -0.3) // 下部前方
+            .lineTo(0.7, 0) // 前部先端に戻る
           ]} />
-          <meshBasicMaterial color={bossColor} />
+          <meshBasicMaterial color="#546E7A" />
+        </mesh>
+
+        {/* R-Type風の前部装甲 - 金属的な仕上げ */}
+        <mesh position={[0.45, 0, 0.01]}>
+          <shapeGeometry args={[new THREE.Shape()
+            .moveTo(0.3, 0) // 前部先端
+            .lineTo(0.2, 0.2) // 上部前方
+            .lineTo(0.0, 0.25) // 上部中央
+            .lineTo(-0.3, 0.2) // 上部後方
+            .lineTo(-0.4, 0) // 中央後方
+            .lineTo(-0.3, -0.2) // 下部後方
+            .lineTo(0.0, -0.25) // 下部中央
+            .lineTo(0.2, -0.2) // 下部前方
+            .lineTo(0.3, 0) // 前部先端に戻る
+          ]} />
+          <meshBasicMaterial color="#37474F" />
         </mesh>
         
-        {/* ボディのディテール - 内側のアーマー */}
-        <mesh position={[0, 0, 0.01]}>
+        {/* ダライアス風のセグメント分割ボディ */}
+        <mesh position={[-0.1, 0, 0.01]}>
           <shapeGeometry args={[new THREE.Shape()
-            .moveTo(0.5, 0) // 前部先端
-            .lineTo(0.4, 0.3) // 上部前方
+            .moveTo(0.4, 0) // 前部
+            .lineTo(0.3, 0.3) // 上部前方
             .lineTo(-0.4, 0.3) // 上部後方
-            .lineTo(-0.5, 0) // 後部
+            .lineTo(-0.6, 0) // 後部
             .lineTo(-0.4, -0.3) // 下部後方
-            .lineTo(0.4, -0.3) // 下部前方
-            .lineTo(0.5, 0) // 前部先端に戻る
+            .lineTo(0.3, -0.3) // 下部前方
+            .lineTo(0.4, 0) // 前部に戻る
           ]} />
-          <meshBasicMaterial color="#990000" />
+          <meshBasicMaterial color="#455A64" />
         </mesh>
         
-        {/* 上部装甲 - 複雑な形状 */}
-        <mesh position={[0, 0.7, 0.01]}>
-          <shapeGeometry args={[new THREE.Shape()
-            .moveTo(0.5, 0) // 前部
-            .lineTo(0.3, 0.2) // 上部前方
-            .lineTo(-0.7, 0.3) // 上部後方
-            .lineTo(-0.8, 0) // 後部
-            .lineTo(-0.7, -0.1) // 下部後方
-            .lineTo(0.3, -0.1) // 下部前方
-            .lineTo(0.5, 0) // 前部に戻る
-          ]} />
-          <meshBasicMaterial color="#880000" />
-        </mesh>
-        
-        {/* 下部装甲 - 複雑な形状 */}
-        <mesh position={[0, -0.7, 0.01]}>
-          <shapeGeometry args={[new THREE.Shape()
-            .moveTo(0.5, 0) // 前部
-            .lineTo(0.3, -0.2) // 下部前方
-            .lineTo(-0.7, -0.3) // 下部後方
-            .lineTo(-0.8, 0) // 後部
-            .lineTo(-0.7, 0.1) // 上部後方
-            .lineTo(0.3, 0.1) // 上部前方
-            .lineTo(0.5, 0) // 前部に戻る
-          ]} />
-          <meshBasicMaterial color="#880000" />
-        </mesh>
-        
-        {/* 装甲パネル - 上部 */}
-        <mesh position={[0, 0.4, 0.02]}>
-          <planeGeometry args={[0.8, 0.1]} />
-          <meshBasicMaterial color="#550000" />
-        </mesh>
-        
-        {/* 装甲パネル - 下部 */}
-        <mesh position={[0, -0.4, 0.02]}>
-          <planeGeometry args={[0.8, 0.1]} />
-          <meshBasicMaterial color="#550000" />
-        </mesh>
-        
-        {/* 中央コア - 発光コアシステム */}
-        <group position={[0.1, 0, 0.03]}>
-          {/* コアの外側リング */}
+        {/* R-Type風の上部サブウェポンモジュール */}
+        <group position={[0.1, 0.5, 0.02]}>
+          {/* モジュールベース */}
           <mesh>
-            <ringGeometry args={[0.45, 0.5, 32]} />
-            <meshBasicMaterial color="#880000" />
+            <boxGeometry args={[0.7, 0.2, 0.04]} />
+            <meshBasicMaterial color="#263238" />
           </mesh>
           
-          {/* 中央のコア - 点滅エフェクト */}
-          <mesh ref={coreRef}>
-            <circleGeometry args={[0.45, 32]} />
-            <meshBasicMaterial color="#FF3300" />
+          {/* モジュール側面装甲 */}
+          <mesh position={[0, 0.15, 0]}>
+            <boxGeometry args={[0.6, 0.1, 0.06]} />
+            <meshBasicMaterial color="#37474F" />
           </mesh>
           
-          {/* コアの内側パターン */}
-          <mesh position={[0, 0, 0.01]}>
-            <circleGeometry args={[0.25, 32]} />
+          {/* センサー/武器ポート */}
+          <mesh position={[0.3, 0, 0.05]}>
+            <circleGeometry args={[0.06, 6]} />
+            <meshBasicMaterial color="#B71C1C" />
+          </mesh>
+          
+          {/* センサー発光エフェクト */}
+          <mesh position={[0.3, 0, 0.06]}>
+            <circleGeometry args={[0.03, 6]} />
             <meshBasicMaterial 
-              color="#FFFF00" 
+              color="#FF5252" 
+              transparent={true}
+              opacity={Math.abs(Math.sin(Date.now() * 0.005)) * 0.5 + 0.5}
+            />
+          </mesh>
+        </group>
+        
+        {/* R-Type風の下部サブウェポンモジュール */}
+        <group position={[0.1, -0.5, 0.02]}>
+          {/* モジュールベース */}
+          <mesh>
+            <boxGeometry args={[0.7, 0.2, 0.04]} />
+            <meshBasicMaterial color="#263238" />
+          </mesh>
+          
+          {/* モジュール側面装甲 */}
+          <mesh position={[0, -0.15, 0]}>
+            <boxGeometry args={[0.6, 0.1, 0.06]} />
+            <meshBasicMaterial color="#37474F" />
+          </mesh>
+          
+          {/* センサー/武器ポート */}
+          <mesh position={[0.3, 0, 0.05]}>
+            <circleGeometry args={[0.06, 6]} />
+            <meshBasicMaterial color="#B71C1C" />
+          </mesh>
+          
+          {/* センサー発光エフェクト */}
+          <mesh position={[0.3, 0, 0.06]}>
+            <circleGeometry args={[0.03, 6]} />
+            <meshBasicMaterial 
+              color="#FF5252" 
+              transparent={true}
+              opacity={Math.abs(Math.sin(Date.now() * 0.005 + 1.5)) * 0.5 + 0.5}
+            />
+          </mesh>
+        </group>
+        
+        {/* グラディウス/R-Type風の中央コアシステム */}
+        <group position={[0, 0, 0.03]}>
+          {/* コアの外殻 - 六角形 */}
+          <mesh>
+            <circleGeometry args={[0.4, 6]} />
+            <meshBasicMaterial color="#B71C1C" />
+          </mesh>
+          
+          {/* 内側のコア - 点滅エフェクト */}
+          <mesh ref={coreRef}>
+            <circleGeometry args={[0.3, 6]} />
+            <meshBasicMaterial color="#FF1744" />
+          </mesh>
+          
+          {/* 内部の発光システム */}
+          <mesh position={[0, 0, 0.01]}>
+            <circleGeometry args={[0.2, 6]} />
+            <meshBasicMaterial 
+              color="#FFEB3B" 
               transparent={true}
               opacity={Math.abs(Math.sin(Date.now() * 0.002)) * 0.5 + 0.5}
             />
           </mesh>
           
-          {/* デザインラインディテール */}
-          <mesh position={[0, 0, 0.01]} rotation={[0, 0, Math.PI/4]}>
-            <planeGeometry args={[0.7, 0.04]} />
-            <meshBasicMaterial color="#000000" transparent={true} opacity={0.5} />
+          {/* バイオメカニカルなコアディテール - 横線 */}
+          <mesh position={[0, 0, 0.01]} rotation={[0, 0, Math.PI/6]}>
+            <boxGeometry args={[0.65, 0.03, 0.01]} />
+            <meshBasicMaterial color="#000000" transparent={true} opacity={0.6} />
           </mesh>
           
-          <mesh position={[0, 0, 0.01]} rotation={[0, 0, -Math.PI/4]}>
-            <planeGeometry args={[0.7, 0.04]} />
-            <meshBasicMaterial color="#000000" transparent={true} opacity={0.5} />
+          {/* バイオメカニカルなコアディテール - 縦線 */}
+          <mesh position={[0, 0, 0.01]} rotation={[0, 0, Math.PI/6 + Math.PI/2]}>
+            <boxGeometry args={[0.65, 0.03, 0.01]} />
+            <meshBasicMaterial color="#000000" transparent={true} opacity={0.6} />
+          </mesh>
+          
+          {/* 保護リングの外殻 */}
+          <mesh>
+            <ringGeometry args={[0.42, 0.45, 6]} />
+            <meshBasicMaterial color="#263238" />
           </mesh>
         </group>
         
-        {/* 砲台1 - 上部 */}
-        <group position={[-0.2, 0.6, 0.02]} ref={gun1Ref}>
-          {/* 砲台のベース部分 */}
+        {/* グラディウス風の上部メイン砲台 */}
+        <group position={[-0.2, 0.6, 0.03]} ref={gun1Ref}>
+          {/* 砲台のベース部分 - 六角形 */}
           <mesh>
-            <circleGeometry args={[0.2, 16]} />
-            <meshBasicMaterial color="#660000" />
+            <circleGeometry args={[0.15, 6]} />
+            <meshBasicMaterial color="#37474F" />
           </mesh>
           
-          {/* 砲身 */}
-          <mesh position={[0.4, 0, 0]}>
-            <shapeGeometry args={[new THREE.Shape()
-              .moveTo(0.5, 0) // 前部先端
-              .lineTo(0.3, 0.1) // 上部
-              .lineTo(-0.3, 0.1) // 後部上
-              .lineTo(-0.3, -0.1) // 後部下
-              .lineTo(0.3, -0.1) // 下部
-              .lineTo(0.5, 0) // 前部先端に戻る
-            ]} />
-            <meshBasicMaterial color="#AA0000" />
+          {/* 砲身 - 機械的な形状 */}
+          <mesh position={[0.3, 0, 0]}>
+            <boxGeometry args={[0.5, 0.12, 0.06]} />
+            <meshBasicMaterial color="#263238" />
           </mesh>
           
-          {/* 砲身のディテール */}
-          <mesh position={[0.4, 0, 0.01]}>
-            <planeGeometry args={[0.7, 0.05]} />
-            <meshBasicMaterial color="#660000" />
-          </mesh>
-        </group>
-        
-        {/* 砲台2 - 下部 */}
-        <group position={[-0.2, -0.6, 0.02]} ref={gun2Ref}>
-          {/* 砲台のベース部分 */}
-          <mesh>
-            <circleGeometry args={[0.2, 16]} />
-            <meshBasicMaterial color="#660000" />
+          {/* 砲身のディテール - 上部 */}
+          <mesh position={[0.3, 0.08, 0.04]}>
+            <boxGeometry args={[0.48, 0.02, 0.01]} />
+            <meshBasicMaterial color="#546E7A" />
           </mesh>
           
-          {/* 砲身 */}
-          <mesh position={[0.4, 0, 0]}>
-            <shapeGeometry args={[new THREE.Shape()
-              .moveTo(0.5, 0) // 前部先端
-              .lineTo(0.3, 0.1) // 上部
-              .lineTo(-0.3, 0.1) // 後部上
-              .lineTo(-0.3, -0.1) // 後部下
-              .lineTo(0.3, -0.1) // 下部
-              .lineTo(0.5, 0) // 前部先端に戻る
-            ]} />
-            <meshBasicMaterial color="#AA0000" />
+          {/* 砲身のディテール - 下部 */}
+          <mesh position={[0.3, -0.08, 0.04]}>
+            <boxGeometry args={[0.48, 0.02, 0.01]} />
+            <meshBasicMaterial color="#546E7A" />
           </mesh>
           
-          {/* 砲身のディテール */}
-          <mesh position={[0.4, 0, 0.01]}>
-            <planeGeometry args={[0.7, 0.05]} />
-            <meshBasicMaterial color="#660000" />
-          </mesh>
-        </group>
-        
-        {/* エンジン排気 - 後方 */}
-        <group position={[-0.8, 0, 0.01]}>
-          <mesh>
-            <planeGeometry args={[0.3, 0.6]} />
+          {/* 砲口の発光部分 */}
+          <mesh position={[0.55, 0, 0.04]}>
+            <circleGeometry args={[0.05, 6]} />
             <meshBasicMaterial 
-              color="#FF6600" 
+              color="#F44336" 
               transparent={true}
-              opacity={Math.abs(Math.sin(Date.now() * 0.01)) * 0.3 + 0.7}
+              opacity={Math.abs(Math.sin(Date.now() * 0.01)) * 0.5 + 0.5}
+            />
+          </mesh>
+        </group>
+        
+        {/* グラディウス風の下部メイン砲台 */}
+        <group position={[-0.2, -0.6, 0.03]} ref={gun2Ref}>
+          {/* 砲台のベース部分 - 六角形 */}
+          <mesh>
+            <circleGeometry args={[0.15, 6]} />
+            <meshBasicMaterial color="#37474F" />
+          </mesh>
+          
+          {/* 砲身 - 機械的な形状 */}
+          <mesh position={[0.3, 0, 0]}>
+            <boxGeometry args={[0.5, 0.12, 0.06]} />
+            <meshBasicMaterial color="#263238" />
+          </mesh>
+          
+          {/* 砲身のディテール - 上部 */}
+          <mesh position={[0.3, 0.08, 0.04]}>
+            <boxGeometry args={[0.48, 0.02, 0.01]} />
+            <meshBasicMaterial color="#546E7A" />
+          </mesh>
+          
+          {/* 砲身のディテール - 下部 */}
+          <mesh position={[0.3, -0.08, 0.04]}>
+            <boxGeometry args={[0.48, 0.02, 0.01]} />
+            <meshBasicMaterial color="#546E7A" />
+          </mesh>
+          
+          {/* 砲口の発光部分 */}
+          <mesh position={[0.55, 0, 0.04]}>
+            <circleGeometry args={[0.05, 6]} />
+            <meshBasicMaterial 
+              color="#F44336" 
+              transparent={true}
+              opacity={Math.abs(Math.sin(Date.now() * 0.01 + 1.5)) * 0.5 + 0.5}
+            />
+          </mesh>
+        </group>
+        
+        {/* ダライアス風のエンジンスラスター - 3基 */}
+        <group position={[-0.85, 0, 0.01]}>
+          {/* 中央スラスター */}
+          <mesh>
+            <shapeGeometry args={[new THREE.Shape()
+              .moveTo(0, 0) // エンジン接続部
+              .lineTo(-0.12, 0.2) // 上部
+              .lineTo(-0.2, 0) // 後部
+              .lineTo(-0.12, -0.2) // 下部
+              .lineTo(0, 0) // エンジン接続部に戻る
+            ]} />
+            <meshBasicMaterial 
+              color="#FF9800" 
+              transparent={true}
+              opacity={Math.abs(Math.sin(Date.now() * 0.015)) * 0.3 + 0.7}
             />
           </mesh>
           
-          <mesh position={[0, 0, 0.01]}>
-            <planeGeometry args={[0.2, 0.4]} />
+          {/* 中央スラスター内部 */}
+          <mesh position={[-0.1, 0, 0.01]}>
+            <shapeGeometry args={[new THREE.Shape()
+              .moveTo(0, 0) // エンジン内部
+              .lineTo(-0.06, 0.1) // 上部
+              .lineTo(-0.1, 0) // 後部
+              .lineTo(-0.06, -0.1) // 下部
+              .lineTo(0, 0) // エンジン内部に戻る
+            ]} />
             <meshBasicMaterial 
-              color="#FFFF00" 
+              color="#FFEB3B" 
               transparent={true}
-              opacity={Math.abs(Math.sin(Date.now() * 0.01)) * 0.2 + 0.8}
+              opacity={Math.abs(Math.sin(Date.now() * 0.015)) * 0.2 + 0.8}
             />
           </mesh>
+          
+          {/* 上部スラスター */}
+          <mesh position={[0, 0.3, 0]}>
+            <shapeGeometry args={[new THREE.Shape()
+              .moveTo(0, 0) // エンジン接続部
+              .lineTo(-0.1, 0.1) // 上部
+              .lineTo(-0.15, 0) // 後部
+              .lineTo(-0.1, -0.1) // 下部
+              .lineTo(0, 0) // エンジン接続部に戻る
+            ]} />
+            <meshBasicMaterial 
+              color="#FF9800" 
+              transparent={true}
+              opacity={Math.abs(Math.sin(Date.now() * 0.01 + 0.5)) * 0.3 + 0.7}
+            />
+          </mesh>
+          
+          {/* 下部スラスター */}
+          <mesh position={[0, -0.3, 0]}>
+            <shapeGeometry args={[new THREE.Shape()
+              .moveTo(0, 0) // エンジン接続部
+              .lineTo(-0.1, 0.1) // 上部
+              .lineTo(-0.15, 0) // 後部
+              .lineTo(-0.1, -0.1) // 下部
+              .lineTo(0, 0) // エンジン接続部に戻る
+            ]} />
+            <meshBasicMaterial 
+              color="#FF9800" 
+              transparent={true}
+              opacity={Math.abs(Math.sin(Date.now() * 0.01 + 1.0)) * 0.3 + 0.7}
+            />
+          </mesh>
+        </group>
+        
+        {/* メカニカルなディテール - 水平ライン */}
+        <mesh position={[0, 0, 0.01]}>
+          <planeGeometry args={[1.6, 0.03]} />
+          <meshBasicMaterial color="#263238" />
+        </mesh>
+        
+        {/* メカニカルなディテール - R-Type風の小型センサーアレイ */}
+        <group>
+          {Array.from({ length: 4 }).map((_, i) => (
+            <mesh 
+              key={i} 
+              position={[
+                -0.6 + i * 0.3, 
+                i % 2 === 0 ? 0.15 : -0.15, 
+                0.04
+              ]}
+            >
+              <circleGeometry args={[0.04, 6]} />
+              <meshBasicMaterial 
+                color="#4FC3F7" 
+                transparent={true}
+                opacity={Math.abs(Math.sin(Date.now() * 0.01 + i * 0.5)) * 0.5 + 0.5}
+              />
+            </mesh>
+          ))}
         </group>
       </group>
       

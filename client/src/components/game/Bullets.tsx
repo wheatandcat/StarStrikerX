@@ -33,86 +33,93 @@ const Bullet = ({ bullet }: { bullet: any }) => {
   
   return (
     <group>
-      {/* SFC風の弾 - 詳細な2D形状 */}
+      {/* グラディウス/R-Type風の弾 - 幾何学的で精密な形状 */}
       {isPlayerBullet ? (
-        // プレイヤーの弾 - エネルギーショット
+        // プレイヤーの弾 - グラディウス風ツインレーザー
         <group 
           ref={groupRef}
           position={[bullet.position[0], bullet.position[1], 0]}
           rotation={[0, 0, bulletRotation]}
         >
-          {/* メイン弾体 */}
+          {/* メインレーザービーム - 楕円形状 */}
           <mesh>
-            <shapeGeometry args={[new THREE.Shape()
-              .moveTo(bulletSize * 0.4, 0) // 前部先端
-              .lineTo(bulletSize * 0.2, bulletSize * 0.15) // 上部
-              .lineTo(-bulletSize * 0.2, bulletSize * 0.15) // 後部上
-              .lineTo(-bulletSize * 0.3, 0) // 後部
-              .lineTo(-bulletSize * 0.2, -bulletSize * 0.15) // 後部下
-              .lineTo(bulletSize * 0.2, -bulletSize * 0.15) // 下部
-              .lineTo(bulletSize * 0.4, 0) // 前部先端に戻る
-            ]} />
-            <meshBasicMaterial color="#66FFFF" />
+            <capsuleGeometry args={[bulletSize * 0.12, bulletSize * 0.7, 4, 8]} />
+            <meshBasicMaterial color="#00FFFF" />
           </mesh>
           
-          {/* 内側の発光部分 */}
+          {/* 内側の高エネルギー部分 */}
           <mesh position={[0, 0, 0.01]}>
-            <shapeGeometry args={[new THREE.Shape()
-              .moveTo(bulletSize * 0.3, 0) // 前部先端
-              .lineTo(bulletSize * 0.1, bulletSize * 0.1) // 上部
-              .lineTo(-bulletSize * 0.15, bulletSize * 0.1) // 後部上
-              .lineTo(-bulletSize * 0.2, 0) // 後部
-              .lineTo(-bulletSize * 0.15, -bulletSize * 0.1) // 後部下
-              .lineTo(bulletSize * 0.1, -bulletSize * 0.1) // 下部
-              .lineTo(bulletSize * 0.3, 0) // 前部先端に戻る
-            ]} />
+            <capsuleGeometry args={[bulletSize * 0.08, bulletSize * 0.6, 4, 8]} />
             <meshBasicMaterial color="#FFFFFF" />
           </mesh>
           
-          {/* 尾部の発光エフェクト */}
-          <mesh position={[-bulletSize * 0.3, 0, 0]}>
-            <planeGeometry args={[bulletSize * 0.2, bulletSize * 0.2]} />
+          {/* 前方チップ - 六角形 */}
+          <mesh position={[bulletSize * 0.35, 0, 0.01]}>
+            <circleGeometry args={[bulletSize * 0.15, 6]} />
             <meshBasicMaterial 
               color="#00FFFF" 
+              transparent={true}
+              opacity={0.9}
+            />
+          </mesh>
+          
+          {/* 後方の発光エフェクト */}
+          <mesh position={[-bulletSize * 0.35, 0, 0]}>
+            <circleGeometry args={[bulletSize * 0.1, 8]} />
+            <meshBasicMaterial 
+              color="#80DEEA" 
               transparent={true}
               opacity={0.7}
             />
           </mesh>
         </group>
       ) : (
-        // 敵の弾 - 複数の要素を持つ
+        // 敵の弾 - ダライアス/R-Type風のエネルギー弾
         <group
           ref={groupRef}
           position={[bullet.position[0], bullet.position[1], 0]}
         >
-          {/* 弾の本体 */}
-          <mesh>
-            <shapeGeometry args={[new THREE.Shape()
-              .moveTo(bulletSize * 0.2, 0) // 前部
-              .lineTo(bulletSize * 0.1, bulletSize * 0.15) // 上部
-              .lineTo(-bulletSize * 0.2, bulletSize * 0.15) // 後部上
-              .lineTo(-bulletSize * 0.2, -bulletSize * 0.15) // 後部下
-              .lineTo(bulletSize * 0.1, -bulletSize * 0.15) // 下部
-              .lineTo(bulletSize * 0.2, 0) // 前部に戻る
-            ]} />
-            <meshBasicMaterial color="#FF6666" />
+          {/* 弾の本体 - 六角形 */}
+          <mesh rotation={[0, 0, Date.now() * 0.005]}>
+            <circleGeometry args={[bulletSize * 0.25, 6]} />
+            <meshBasicMaterial color="#F44336" />
           </mesh>
           
-          {/* 中央の発光部分 */}
-          <mesh position={[0, 0, 0.01]}>
-            <circleGeometry args={[bulletSize * 0.15, 16]} />
-            <meshBasicMaterial color="#FFFF00" />
-          </mesh>
-          
-          {/* 尾部のエフェクト */}
-          <mesh position={[-bulletSize * 0.25, 0, 0]}>
-            <planeGeometry args={[bulletSize * 0.15, bulletSize * 0.25]} />
+          {/* 中央のエネルギーコア */}
+          <mesh position={[0, 0, 0.01]} rotation={[0, 0, -Date.now() * 0.003]}>
+            <circleGeometry args={[bulletSize * 0.15, 6]} />
             <meshBasicMaterial 
-              color="#FF8800" 
+              color="#FFEB3B" 
+              transparent={true}
+              opacity={Math.abs(Math.sin(Date.now() * 0.01)) * 0.3 + 0.7}
+            />
+          </mesh>
+          
+          {/* 発光リング */}
+          <mesh position={[0, 0, 0.005]}>
+            <ringGeometry args={[bulletSize * 0.25, bulletSize * 0.3, 6]} />
+            <meshBasicMaterial 
+              color="#FF5722" 
               transparent={true}
               opacity={0.6}
             />
           </mesh>
+          
+          {/* R-Type風の軌跡エフェクト */}
+          {[0, 1, 2].map((i) => (
+            <mesh 
+              key={i}
+              position={[-bulletSize * 0.1 * (i + 1), 0, -0.01 * i]}
+              scale={[1 - i * 0.2, 1 - i * 0.2, 1]}
+            >
+              <circleGeometry args={[bulletSize * 0.15, 6]} />
+              <meshBasicMaterial 
+                color="#FF9800" 
+                transparent={true}
+                opacity={0.4 - i * 0.1}
+              />
+            </mesh>
+          ))}
         </group>
       )}
     </group>
