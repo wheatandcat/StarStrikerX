@@ -169,87 +169,59 @@ export const useGradius = create<GradiusState>()(
     shootBullet: () => {
       const { playerPosition, bullets, weaponLevel } = get();
       const [px, py] = playerPosition;
-      const bulletsToAdd = [];
+      
+      // Create a type-safe array for new bullets
+      const bulletsToAdd: {
+        id: string;
+        position: [number, number];
+        direction: [number, number];
+        isPlayerBullet: boolean;
+      }[] = [];
       
       // Generate a unique ID for each bullet
       const createBulletId = () => `bullet_${Date.now()}_${Math.random().toString(16).slice(2)}`;
+      
+      // Helper function to create a bullet with proper typing
+      const createBullet = (
+        posX: number, 
+        posY: number, 
+        dirX: number, 
+        dirY: number
+      ) => {
+        return {
+          id: createBulletId(),
+          position: [posX, posY] as [number, number],
+          direction: [dirX, dirY] as [number, number],
+          isPlayerBullet: true
+        };
+      };
       
       // Create bullets based on weapon level
       switch (weaponLevel) {
         case WeaponLevel.Single:
           // Single straight bullet
-          bulletsToAdd.push({
-            id: createBulletId(),
-            position: [px + 1, py],
-            direction: [1, 0],
-            isPlayerBullet: true
-          });
+          bulletsToAdd.push(createBullet(px + 1, py, 1, 0));
           break;
           
         case WeaponLevel.Double:
           // Two straight bullets
-          bulletsToAdd.push({
-            id: createBulletId(),
-            position: [px + 1, py - 0.3],
-            direction: [1, 0],
-            isPlayerBullet: true
-          });
-          bulletsToAdd.push({
-            id: createBulletId(),
-            position: [px + 1, py + 0.3],
-            direction: [1, 0],
-            isPlayerBullet: true
-          });
+          bulletsToAdd.push(createBullet(px + 1, py - 0.3, 1, 0));
+          bulletsToAdd.push(createBullet(px + 1, py + 0.3, 1, 0));
           break;
           
         case WeaponLevel.Triple:
           // Three-way shot
-          bulletsToAdd.push({
-            id: createBulletId(),
-            position: [px + 1, py],
-            direction: [1, 0],
-            isPlayerBullet: true
-          });
-          bulletsToAdd.push({
-            id: createBulletId(),
-            position: [px + 0.8, py],
-            direction: [1, -0.2],
-            isPlayerBullet: true
-          });
-          bulletsToAdd.push({
-            id: createBulletId(),
-            position: [px + 0.8, py],
-            direction: [1, 0.2],
-            isPlayerBullet: true
-          });
+          bulletsToAdd.push(createBullet(px + 1, py, 1, 0));
+          bulletsToAdd.push(createBullet(px + 0.8, py, 1, -0.2));
+          bulletsToAdd.push(createBullet(px + 0.8, py, 1, 0.2));
           break;
           
         case WeaponLevel.Ultimate:
           // Three-way shot + backward shot
-          bulletsToAdd.push({
-            id: createBulletId(),
-            position: [px + 1, py],
-            direction: [1, 0],
-            isPlayerBullet: true
-          });
-          bulletsToAdd.push({
-            id: createBulletId(),
-            position: [px + 0.8, py],
-            direction: [1, -0.2],
-            isPlayerBullet: true
-          });
-          bulletsToAdd.push({
-            id: createBulletId(),
-            position: [px + 0.8, py],
-            direction: [1, 0.2],
-            isPlayerBullet: true
-          });
-          bulletsToAdd.push({
-            id: createBulletId(),
-            position: [px - 0.5, py],
-            direction: [-1, 0],
-            isPlayerBullet: true
-          });
+          bulletsToAdd.push(createBullet(px + 1, py, 1, 0));
+          bulletsToAdd.push(createBullet(px + 0.8, py, 1, -0.2));
+          bulletsToAdd.push(createBullet(px + 0.8, py, 1, 0.2));
+          bulletsToAdd.push(createBullet(px - 0.5, py, -1, 0));
           break;
       }
       
@@ -306,10 +278,17 @@ export const useGradius = create<GradiusState>()(
     // Enemy actions
     spawnEnemy: (type, position, health, speed) => {
       const { enemies } = get();
+      
+      // Ensure position is a tuple of exactly [number, number]
+      const safePosition: [number, number] = 
+        Array.isArray(position) && position.length === 2
+          ? [position[0], position[1]]
+          : [0, 0]; // Default position if invalid
+      
       const newEnemy = {
         id: `enemy_${Date.now()}_${Math.random().toString(16).slice(2)}`,
         type,
-        position,
+        position: safePosition,
         health,
         speed,
       };
@@ -362,10 +341,16 @@ export const useGradius = create<GradiusState>()(
       const powerUpTypes = [PowerUpType.WeaponUpgrade];
       const randomType = powerUpTypes[Math.floor(Math.random() * powerUpTypes.length)];
       
+      // Ensure position is a tuple of exactly [number, number]
+      const safePosition: [number, number] = 
+        Array.isArray(position) && position.length === 2
+          ? [position[0], position[1]]
+          : [0, 0]; // Default position if invalid
+      
       const newPowerUp = {
         id: `powerup_${Date.now()}_${Math.random().toString(16).slice(2)}`,
         type: randomType,
-        position
+        position: safePosition
       };
       
       set({ powerUps: [...powerUps, newPowerUp] });

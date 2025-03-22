@@ -74,24 +74,27 @@ const Level = () => {
   // Get screen dimensions from three.js
   const { viewport } = useThree();
   
+  // Create a ref to track boss active state to avoid stale closures
+  const isBossActiveRef = useRef(bossActive);
+  
+  // Update the ref when bossActive changes
+  useEffect(() => {
+    isBossActiveRef.current = bossActive;
+  }, [bossActive]);
+  
   // Create and manage enemy spawning interval
   useEffect(() => {
-    // Only spawn enemies when the game is actively playing and boss is not active
+    // Only spawn enemies when the game is actively playing
     if (gamePhase !== "playing") return;
-    
-    // Use a ref to track if we're in boss mode to avoid stale closure issues
-    const isBossActiveRef = { current: bossActive };
-    
-    // Update ref when bossActive changes
-    useEffect(() => {
-      isBossActiveRef.current = bossActive;
-    }, [bossActive]);
     
     // Set up enemy spawning timer with proper cleanup
     const spawnEnemyInterval = setInterval(() => {
-      // Check if we're still in playing mode and not in boss battle
-      if (useGradius.getState().gamePhase !== "playing" || isBossActiveRef.current) {
-        return; // Don't spawn if game state changed or boss is active
+      // Check the current game state and boss state via store to avoid stale values
+      const currentState = useGradius.getState();
+      
+      // Only spawn if we're playing and boss is not active
+      if (currentState.gamePhase !== "playing" || isBossActiveRef.current) {
+        return;
       }
       
       const enemyType = getRandomEnemyType();
@@ -157,8 +160,10 @@ const Level = () => {
         return;
       }
       
-      // Update bullet position in store
-      bullet.position = [newX, newY];
+      // Update bullet position using a safer approach
+      // Creating a new tuple to ensure type safety
+      const newPosition: [number, number] = [newX, newY];
+      bullet.position = newPosition;
       
       // Check bullet collisions
       if (bullet.isPlayerBullet) {
@@ -238,8 +243,10 @@ const Level = () => {
         return;
       }
       
-      // Update enemy position in store
-      enemy.position = [newX, newY];
+      // Update enemy position using a safer approach
+      // Creating a new tuple to ensure type safety
+      const newEnemyPosition: [number, number] = [newX, newY];
+      enemy.position = newEnemyPosition;
       
       // Check player collision with enemy
       if (!isPlayerInvulnerable) {
@@ -269,8 +276,10 @@ const Level = () => {
         return;
       }
       
-      // Update power-up position in store
-      powerUp.position = [newX, py];
+      // Update power-up position using a safer approach
+      // Creating a new tuple to ensure type safety
+      const newPowerUpPosition: [number, number] = [newX, py];
+      powerUp.position = newPowerUpPosition;
       
       // Check player collision with power-up
       if (checkPlayerPowerUpCollision(playerPosition, [newX, py])) {
