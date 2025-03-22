@@ -55,35 +55,93 @@ const PowerUp = ({ powerUp }: { powerUp: any }) => {
       position={[powerUp.position[0], powerUp.position[1], 0]}
       scale={[1, 1, 1]}
     >
-      {/* パワーアップの四角形 */}
-      <mesh ref={meshRef}>
-        <planeGeometry args={[POWERUP_SIZE * 0.8, POWERUP_SIZE * 0.8]} />
-        <meshBasicMaterial color={color} />
-      </mesh>
-      
-      {/* 内側のシンボル */}
-      <mesh position={[0, 0, 0.01]}>
-        <planeGeometry args={[POWERUP_SIZE * 0.4, POWERUP_SIZE * 0.4]} />
-        <meshBasicMaterial color="#FFFFFF" />
-      </mesh>
-      
-      {/* テキストラベル */}
-      <Html
-        position={[0, 0, 0.1]}
-        transform
-        center
-        scale={0.5}
-      >
-        <div style={{ 
-          fontFamily: 'Arial, sans-serif',
-          color: '#000000', 
-          fontSize: '24px',
-          fontWeight: 'bold',
-          textAlign: 'center'
-        }}>
-          {label}
-        </div>
-      </Html>
+      {/* SFC風のカプセル型パワーアップ */}
+      <group>
+        {/* 背景のカプセル - 六角形 */}
+        <mesh ref={meshRef}>
+          <shapeGeometry args={[new THREE.Shape()
+            .moveTo(POWERUP_SIZE * 0.3, 0) // 右
+            .lineTo(POWERUP_SIZE * 0.15, POWERUP_SIZE * 0.3) // 右上
+            .lineTo(-POWERUP_SIZE * 0.15, POWERUP_SIZE * 0.3) // 左上
+            .lineTo(-POWERUP_SIZE * 0.3, 0) // 左
+            .lineTo(-POWERUP_SIZE * 0.15, -POWERUP_SIZE * 0.3) // 左下
+            .lineTo(POWERUP_SIZE * 0.15, -POWERUP_SIZE * 0.3) // 右下
+            .lineTo(POWERUP_SIZE * 0.3, 0) // 右に戻る
+          ]} />
+          <meshBasicMaterial color={color} />
+        </mesh>
+        
+        {/* 内側の装飾 - 内部の六角形 */}
+        <mesh position={[0, 0, 0.01]}>
+          <shapeGeometry args={[new THREE.Shape()
+            .moveTo(POWERUP_SIZE * 0.2, 0) // 右
+            .lineTo(POWERUP_SIZE * 0.1, POWERUP_SIZE * 0.2) // 右上
+            .lineTo(-POWERUP_SIZE * 0.1, POWERUP_SIZE * 0.2) // 左上
+            .lineTo(-POWERUP_SIZE * 0.2, 0) // 左
+            .lineTo(-POWERUP_SIZE * 0.1, -POWERUP_SIZE * 0.2) // 左下
+            .lineTo(POWERUP_SIZE * 0.1, -POWERUP_SIZE * 0.2) // 右下
+            .lineTo(POWERUP_SIZE * 0.2, 0) // 右に戻る
+          ]} />
+          <meshBasicMaterial color="#FFFFFF" />
+        </mesh>
+        
+        {/* 上部の光沢エフェクト */}
+        <mesh position={[0, POWERUP_SIZE * 0.1, 0.02]}>
+          <planeGeometry args={[POWERUP_SIZE * 0.3, POWERUP_SIZE * 0.05]} />
+          <meshBasicMaterial 
+            color="#FFFFFF"
+            transparent={true}
+            opacity={0.7}
+          />
+        </mesh>
+        
+        {/* 下部の光沢エフェクト */}
+        <mesh position={[0, -POWERUP_SIZE * 0.1, 0.02]}>
+          <planeGeometry args={[POWERUP_SIZE * 0.3, POWERUP_SIZE * 0.05]} />
+          <meshBasicMaterial 
+            color="#000000"
+            transparent={true}
+            opacity={0.3}
+          />
+        </mesh>
+        
+        {/* 武器アップグレードシンボル - "W"の代わりにレトロな装飾 */}
+        <group position={[0, 0, 0.03]}>
+          {/* 横線 - 上 */}
+          <mesh position={[0, POWERUP_SIZE * 0.08, 0]}>
+            <planeGeometry args={[POWERUP_SIZE * 0.25, POWERUP_SIZE * 0.06]} />
+            <meshBasicMaterial color="#000000" />
+          </mesh>
+          
+          {/* 横線 - 下 */}
+          <mesh position={[0, -POWERUP_SIZE * 0.08, 0]}>
+            <planeGeometry args={[POWERUP_SIZE * 0.25, POWERUP_SIZE * 0.06]} />
+            <meshBasicMaterial color="#000000" />
+          </mesh>
+          
+          {/* 縦線 - 左 */}
+          <mesh position={[-POWERUP_SIZE * 0.08, 0, 0]} rotation={[0, 0, Math.PI / 2]}>
+            <planeGeometry args={[POWERUP_SIZE * 0.2, POWERUP_SIZE * 0.06]} />
+            <meshBasicMaterial color="#000000" />
+          </mesh>
+          
+          {/* 縦線 - 右 */}
+          <mesh position={[POWERUP_SIZE * 0.08, 0, 0]} rotation={[0, 0, Math.PI / 2]}>
+            <planeGeometry args={[POWERUP_SIZE * 0.2, POWERUP_SIZE * 0.06]} />
+            <meshBasicMaterial color="#000000" />
+          </mesh>
+        </group>
+        
+        {/* 発光エフェクト - 外周 */}
+        <mesh position={[0, 0, -0.01]}>
+          <ringGeometry args={[POWERUP_SIZE * 0.35, POWERUP_SIZE * 0.4, 6]} />
+          <meshBasicMaterial 
+            color={color}
+            transparent={true}
+            opacity={0.5}
+          />
+        </mesh>
+      </group>
     </group>
   );
 };

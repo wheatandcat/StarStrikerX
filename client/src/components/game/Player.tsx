@@ -62,40 +62,111 @@ const Player = () => {
       position={[playerPosition[0], playerPosition[1], 0]}
       rotation={[0, 0, 0]}
     >
-      {/* レトロスタイルの宇宙船 - 単純な2D形状 */}
+      {/* SFC風の宇宙船 - 詳細な2D形状 */}
       <group scale={[PLAYER_SIZE * 1.5, PLAYER_SIZE * 1.5, 1]}>
-        {/* メインボディ - 三角形 */}
+        {/* メインボディ - 少し複雑な形状 */}
         <mesh>
-          <planeGeometry args={[1, 0.5]} />
-          <meshBasicMaterial color="#4477FF" />
+          <shapeGeometry args={[new THREE.Shape()
+            .moveTo(0.5, 0) // 前部先端
+            .lineTo(0.3, 0.15) // 上部前方
+            .lineTo(-0.4, 0.25) // 上部後方
+            .lineTo(-0.6, 0) // 後部
+            .lineTo(-0.4, -0.25) // 下部後方
+            .lineTo(0.3, -0.15) // 下部前方
+            .lineTo(0.5, 0) // 前部先端に戻る
+          ]} />
+          <meshBasicMaterial color="#3366DD" />
         </mesh>
         
-        {/* コックピット部分 - 小さな丸 */}
-        <mesh position={[0.3, 0, 0.01]}>
-          <planeGeometry args={[0.3, 0.3]} />
-          <meshBasicMaterial color="#8899FF" />
+        {/* ボディのディテール - 中央部 */}
+        <mesh position={[0, 0, 0.01]}>
+          <shapeGeometry args={[new THREE.Shape()
+            .moveTo(0.3, 0) // 前部
+            .lineTo(0.2, 0.1) // 上部前方
+            .lineTo(-0.2, 0.1) // 上部後方
+            .lineTo(-0.3, 0) // 後部
+            .lineTo(-0.2, -0.1) // 下部後方
+            .lineTo(0.2, -0.1) // 下部前方
+            .lineTo(0.3, 0) // 前部に戻る
+          ]} />
+          <meshBasicMaterial color="#4488FF" />
         </mesh>
         
-        {/* ウィング - 上 */}
-        <mesh position={[-0.2, 0.3, 0]}>
-          <planeGeometry args={[0.4, 0.2]} />
-          <meshBasicMaterial color="#2244AA" />
+        {/* コックピット部分 */}
+        <mesh position={[0.2, 0, 0.02]}>
+          <shapeGeometry args={[new THREE.Shape()
+            .moveTo(0.15, 0) // 前部
+            .lineTo(0.05, 0.08) // 上部前方
+            .lineTo(-0.15, 0.08) // 上部後方
+            .lineTo(-0.15, -0.08) // 下部後方
+            .lineTo(0.05, -0.08) // 下部前方
+            .lineTo(0.15, 0) // 前部に戻る
+          ]} />
+          <meshBasicMaterial color="#99CCFF" />
         </mesh>
         
-        {/* ウィング - 下 */}
-        <mesh position={[-0.2, -0.3, 0]}>
-          <planeGeometry args={[0.4, 0.2]} />
-          <meshBasicMaterial color="#2244AA" />
+        {/* ウィングの装甲 - 上 */}
+        <mesh position={[0, 0.18, 0.01]}>
+          <shapeGeometry args={[new THREE.Shape()
+            .moveTo(0.1, 0) // 前部
+            .lineTo(-0.3, 0.1) // 上部後方
+            .lineTo(-0.4, 0) // 後部
+            .lineTo(-0.3, -0.05) // 下部後方
+            .lineTo(0.1, 0) // 前部に戻る
+          ]} />
+          <meshBasicMaterial color="#2255CC" />
+        </mesh>
+        
+        {/* ウィングの装甲 - 下 */}
+        <mesh position={[0, -0.18, 0.01]}>
+          <shapeGeometry args={[new THREE.Shape()
+            .moveTo(0.1, 0) // 前部
+            .lineTo(-0.3, -0.1) // 下部後方
+            .lineTo(-0.4, 0) // 後部
+            .lineTo(-0.3, 0.05) // 上部後方
+            .lineTo(0.1, 0) // 前部に戻る
+          ]} />
+          <meshBasicMaterial color="#2255CC" />
         </mesh>
         
         {/* エンジン排気 - アニメーション付き */}
-        <mesh ref={engineRef} position={[-0.6, 0, 0]}>
-          <planeGeometry args={[0.4, 0.3]} />
-          <meshBasicMaterial 
-            color="#FF6600" 
-            transparent={true}
-            opacity={0.8}
-          />
+        <group position={[-0.6, 0, 0]}>
+          <mesh ref={engineRef}>
+            <shapeGeometry args={[new THREE.Shape()
+              .moveTo(0, 0) // 排気口
+              .lineTo(-0.3, 0.15) // 上部
+              .lineTo(-0.5, 0) // 後部
+              .lineTo(-0.3, -0.15) // 下部
+              .lineTo(0, 0) // 排気口に戻る
+            ]} />
+            <meshBasicMaterial 
+              color="#FF8800" 
+              transparent={true}
+              opacity={0.8}
+            />
+          </mesh>
+          
+          {/* 内側の明るい排気 */}
+          <mesh position={[-0.2, 0, 0.01]}>
+            <shapeGeometry args={[new THREE.Shape()
+              .moveTo(0, 0) // 排気口
+              .lineTo(-0.2, 0.1) // 上部
+              .lineTo(-0.3, 0) // 後部
+              .lineTo(-0.2, -0.1) // 下部
+              .lineTo(0, 0) // 排気口に戻る
+            ]} />
+            <meshBasicMaterial 
+              color="#FFFF00" 
+              transparent={true}
+              opacity={0.9}
+            />
+          </mesh>
+        </group>
+        
+        {/* 細部のディテール - アクセントライン */}
+        <mesh position={[0.1, 0, 0.03]}>
+          <planeGeometry args={[0.5, 0.02]} />
+          <meshBasicMaterial color="#99FFFF" />
         </mesh>
       </group>
       
