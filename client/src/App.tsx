@@ -47,16 +47,47 @@ function App() {
   // フォント読み込み状態の確認
   const fontsLoadedRef = useRef(false);
   
-  // フォント読み込み確認
+  // フォント読み込み確認 - より詳細なデバッグ情報を含む
   useEffect(() => {
     const checkFontsLoaded = async () => {
       try {
         if ('fonts' in document) {
-          await Promise.all([
+          // フォントロード処理
+          const fontPromises = [
             (document as any).fonts.load('1em "Press Start 2P"'),
             (document as any).fonts.load('1em "VT323"')
-          ]);
+          ];
+          
+          // フォント読み込み状態のログ出力
+          if ((document as any).fonts.check('1em "Press Start 2P"')) {
+            console.log('Press Start 2P already loaded');
+          }
+          
+          if ((document as any).fonts.check('1em "VT323"')) {
+            console.log('VT323 already loaded');
+          }
+          
+          await Promise.all(fontPromises);
           console.log('App component: Fonts loaded successfully!');
+          
+          // 利用可能なフォントリスト
+          const availableFonts: string[] = [];
+          (document as any).fonts.forEach((font: any) => {
+            availableFonts.push(`${font.family} - ${font.status}`);
+          });
+          
+          // 重複を削除
+          const uniqueFonts: string[] = [];
+          const seenFonts = new Map<string, boolean>();
+          
+          for (const font of availableFonts) {
+            if (!seenFonts.has(font)) {
+              seenFonts.set(font, true);
+              uniqueFonts.push(font);
+            }
+          }
+          
+          console.log('Available fonts:', uniqueFonts);
           fontsLoadedRef.current = true;
         }
       } catch (err) {

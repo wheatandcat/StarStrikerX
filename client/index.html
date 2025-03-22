@@ -5,15 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Gradius-Style Shooter</title>
     
-    <!-- 先にローカルフォントを読み込む（優先的に使用） -->
+    <!-- ローカルフォントだけを読み込む -->
     <link rel="preload" href="/fonts/PressStart2P-Regular.woff2" as="font" type="font/woff2" crossorigin>
     <link rel="preload" href="/fonts/VT323-Regular.woff2" as="font" type="font/woff2" crossorigin>
     <link rel="stylesheet" href="/fonts/pixel-font.css">
     
-    <!-- Googleフォントはバックアップとして読み込み -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=VT323&family=Press+Start+2P&display=swap" rel="stylesheet">
+    <!-- Google Fontsの参照は削除 -->
     
     <style>
       /* フォント読み込み前にちらつきを防止 */

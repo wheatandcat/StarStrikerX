@@ -15,11 +15,28 @@
 
 /* ピクセルアート風フォントスタイル */
 .pixel-font {
-  font-family: 'Press Start 2P', 'VT323', monospace;
+  font-family: 'Press Start 2P', 'VT323', monospace, sans-serif !important;
   letter-spacing: -0.05em;
   font-weight: normal;
   text-transform: uppercase;
   text-rendering: optimizeSpeed;
+}
+
+/* ブラウザが特定のフォントをロードできなかった場合のバックアッププラン */
+@font-face {
+  font-family: 'Press Start 2P';
+  src: local('Press Start 2P'), url('/fonts/PressStart2P-Regular.woff2') format('woff2');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'VT323';
+  src: local('VT323'), url('/fonts/VT323-Regular.woff2') format('woff2');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
 }
 
 @layer base {
