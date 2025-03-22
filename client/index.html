@@ -4,6 +4,25 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Gradius-Style Shooter</title>
+    <!-- ローカルフォントを優先的に使用 -->
+    <style>
+      /* プリロード用フォント設定 */
+      @font-face {
+        font-family: 'Press Start 2P';
+        src: local('Press Start 2P'), url('/fonts/pressstart2p.woff') format('woff');
+        font-display: swap;
+      }
+      /* フォントが見つからない場合のフォールバック */
+      @font-face {
+        font-family: 'Press Start 2P Fallback';
+        src: local('Courier New'), local('Courier'), local('monospace');
+      }
+      /* ページの読み込み前にフォントを表示しないようにする */
+      .wf-loading {
+        visibility: hidden;
+      }
+    </style>
+    <!-- バックアップとしてGoogleフォントも読み込み -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -11,8 +30,14 @@
       rel="stylesheet"
     />
   </head>
-  <body>
+  <body class="wf-loading">
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
+    <script>
+      // フォントが読み込まれたときの処理
+      document.fonts.ready.then(() => {
+        document.body.classList.remove('wf-loading');
+      });
+    </script>
   </body>
 </html>

@@ -44,15 +44,16 @@ const LeaderboardModal = ({ onClose, currentScore, playerName }: LeaderboardModa
     } catch (err) {
       console.error('Error fetching leaderboard:', err);
       setError('Could not load leaderboard. Please try again later.');
-      // Fallback data for testing
-      const fallbackData = [
+      // 直接データを使用（APIから取得できない場合は初期データ）
+      const initialData = [
         { id: 1, name: "ACE", score: 15000, date: "2023-07-15" },
         { id: 2, name: "NOVA", score: 12500, date: "2023-07-14" },
         { id: 3, name: "VIPER", score: 10000, date: "2023-07-13" },
         { id: 4, name: "ECHO", score: 8500, date: "2023-07-12" },
         { id: 5, name: "PHANTOM", score: 7000, date: "2023-07-11" }
       ];
-      setLeaderboard(fallbackData);
+      setLeaderboard(initialData);
+      updateHighScores(initialData); // 初期データでグローバルステートも更新
     } finally {
       setIsLoading(false);
     }

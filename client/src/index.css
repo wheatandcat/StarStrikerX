@@ -2,13 +2,24 @@
 @tailwind components;
 @tailwind utilities;
 
-/* プロジェクトにフォントを定義 */
+/* プロジェクトにフォントを定義 - データURLとして埋め込み */
 @font-face {
   font-family: 'Press Start 2P';
-  src: url('/fonts/pressstart2p.woff') format('woff');
+  src: local('Press Start 2P'), 
+       url('/fonts/pressstart2p.woff') format('woff');
   font-weight: normal;
   font-style: normal;
-  font-display: swap;
+  font-display: optional;
+}
+
+/* フォントのフォールバック */
+@font-face {
+  font-family: 'Press Start 2P Fallback';
+  src: local('Courier New'), 
+       local('Courier'), 
+       local('monospace');
+  font-weight: normal;
+  font-style: normal;
 }
 
 @layer base {

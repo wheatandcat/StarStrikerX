@@ -23,8 +23,8 @@ const Boss = () => {
   } = useGradius();
   
   const meshRef = useRef<THREE.Group>(null);
-  const gunRef1 = useRef<THREE.Mesh>(null);
-  const gunRef2 = useRef<THREE.Mesh>(null);
+  const gunRef1 = useRef<THREE.Group>(null);
+  const gunRef2 = useRef<THREE.Group>(null);
   const core1Ref = useRef<THREE.Mesh>(null);
   const core2Ref = useRef<THREE.Mesh>(null);
   
@@ -145,8 +145,8 @@ const Boss = () => {
         // Shoot straight bullets
         const bullet = {
           id: `boss_bullet_${Date.now()}_${Math.random()}`,
-          position: [bossX - 1, bossY],
-          direction: [-1, 0],
+          position: [bossX - 1, bossY] as [number, number],
+          direction: [-1, 0] as [number, number],
           isPlayerBullet: false
         };
         
@@ -158,8 +158,8 @@ const Boss = () => {
         for (let i = -2; i <= 2; i++) {
           const bullet = {
             id: `boss_bullet_${Date.now()}_${Math.random()}`,
-            position: [bossX - 1, bossY],
-            direction: [-1, i * 0.2],
+            position: [bossX - 1, bossY] as [number, number],
+            direction: [-1, i * 0.2] as [number, number],
             isPlayerBullet: false
           };
           
@@ -174,8 +174,8 @@ const Boss = () => {
         
         const bullet3 = {
           id: `boss_bullet_${Date.now()}_${Math.random()}`,
-          position: [bossX - 1, bossY],
-          direction: [Math.cos(angle), Math.sin(angle)],
+          position: [bossX - 1, bossY] as [number, number],
+          direction: [Math.cos(angle), Math.sin(angle)] as [number, number],
           isPlayerBullet: false
         };
         
@@ -189,8 +189,8 @@ const Boss = () => {
           
           const bullet = {
             id: `boss_bullet_${Date.now()}_${Math.random()}`,
-            position: [bossX, bossY],
-            direction: [Math.cos(angle), Math.sin(angle)],
+            position: [bossX, bossY] as [number, number],
+            direction: [Math.cos(angle), Math.sin(angle)] as [number, number],
             isPlayerBullet: false
           };
           
