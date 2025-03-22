@@ -76,25 +76,41 @@ const Level = () => {
   
   // Create and manage enemy spawning interval
   useEffect(() => {
+    // Only spawn enemies when the game is actively playing and boss is not active
     if (gamePhase !== "playing") return;
     
+    // Use a ref to track if we're in boss mode to avoid stale closure issues
+    const isBossActiveRef = { current: bossActive };
+    
+    // Update ref when bossActive changes
+    useEffect(() => {
+      isBossActiveRef.current = bossActive;
+    }, [bossActive]);
+    
+    // Set up enemy spawning timer with proper cleanup
     const spawnEnemyInterval = setInterval(() => {
-      if (!bossActive) {
-        const enemyType = getRandomEnemyType();
-        const spawnPosition = getRandomSpawnPosition();
-        const properties = getEnemyProperties(enemyType);
-        
-        spawnEnemy(
-          enemyType,
-          spawnPosition,
-          properties.health,
-          properties.speed
-        );
+      // Check if we're still in playing mode and not in boss battle
+      if (useGradius.getState().gamePhase !== "playing" || isBossActiveRef.current) {
+        return; // Don't spawn if game state changed or boss is active
       }
+      
+      const enemyType = getRandomEnemyType();
+      const spawnPosition = getRandomSpawnPosition();
+      const properties = getEnemyProperties(enemyType);
+      
+      spawnEnemy(
+        enemyType,
+        spawnPosition,
+        properties.health,
+        properties.speed
+      );
     }, ENEMY_SPAWN_RATE);
     
-    return () => clearInterval(spawnEnemyInterval);
-  }, [gamePhase, bossActive, spawnEnemy]);
+    // Proper cleanup of interval when component unmounts or dependencies change
+    return () => {
+      clearInterval(spawnEnemyInterval);
+    };
+  }, [gamePhase, spawnEnemy]); // Removed bossActive from dependencies to avoid recreating interval
   
   // Main game loop
   useFrame((state, delta) => {

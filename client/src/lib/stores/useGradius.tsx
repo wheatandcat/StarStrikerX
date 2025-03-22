@@ -272,10 +272,17 @@ export const useGradius = create<GradiusState>()(
           weaponLevel: Math.max(get().weaponLevel - 1, WeaponLevel.Single) as WeaponLevel // Lose one weapon level
         });
         
-        // Reset invulnerability after 2 seconds
-        setTimeout(() => {
-          set({ isPlayerInvulnerable: false });
+        // Reset invulnerability after 2 seconds - using a safer approach
+        const invulnerabilityTimer = window.setTimeout(() => {
+          // Only reset if the game is still in the playing state
+          if (get().gamePhase === "playing") {
+            set({ isPlayerInvulnerable: false });
+          }
         }, 2000);
+        
+        // Store the timeout ID for cleanup
+        // This is important to prevent memory leaks
+        return () => window.clearTimeout(invulnerabilityTimer);
       }
       
       console.log(`Player took damage. Lives remaining: ${lives - 1}`);
