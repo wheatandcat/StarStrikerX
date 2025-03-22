@@ -81,6 +81,24 @@ const Level: React.FC<LevelProps> = ({ viewport: canvasViewport }) => {
   // Get screen dimensions from three.js
   const { viewport: threeViewport } = useThree();
   
+  // ポーズキー用のエフェクト
+  useEffect(() => {
+    // ポーズキーのサブスクリプション
+    const unsubscribePause = subscribeKeys(
+      (state) => state.pause,
+      (pressed) => {
+        if (pressed) {
+          useGradius.getState().togglePause();
+        }
+      }
+    );
+    
+    // クリーンアップ
+    return () => {
+      unsubscribePause();
+    };
+  }, [subscribeKeys]);
+  
   // Create a ref to track boss active state to avoid stale closures
   const isBossActiveRef = useRef(bossActive);
   

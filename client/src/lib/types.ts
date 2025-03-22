@@ -9,7 +9,7 @@ export enum Controls {
 }
 
 // Game phases
-export type GamePhase = "menu" | "playing" | "gameOver" | "stageClear";
+export type GamePhase = "menu" | "playing" | "paused" | "gameOver" | "stageClear";
 
 // Power-up types
 export enum PowerUpType {

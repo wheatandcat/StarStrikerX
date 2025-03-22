@@ -46,6 +46,7 @@ interface GradiusState {
   continueToNextStage: () => void;
   gameOver: () => void;
   stageClear: () => void;
+  togglePause: () => void;
   
   // Player actions
   movePlayer: (x: number, y: number) => void;
@@ -160,6 +161,18 @@ export const useGradius = create<GradiusState>()(
     stageClear: () => {
       set({ gamePhase: "stageClear" });
       console.log("Stage clear");
+    },
+    
+    togglePause: () => {
+      const { gamePhase } = get();
+      // ゲームプレイ中のみポーズ可能
+      if (gamePhase === "playing") {
+        set({ gamePhase: "paused" });
+        console.log("Game paused");
+      } else if (gamePhase === "paused") {
+        set({ gamePhase: "playing" });
+        console.log("Game resumed");
+      }
     },
     
     // Player actions
