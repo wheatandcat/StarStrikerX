@@ -89,9 +89,8 @@ const GameUI = () => {
         center
         distanceFactor={10}
       >
-        <div style={{
+        <div className="pixel-font" style={{
           color: 'white',
-          fontFamily: "'Press Start 2P', cursive",
           fontSize: '14px',
           whiteSpace: 'nowrap',
           textShadow: '0 0 5px #ffff88, 0 0 10px #ffff00'
@@ -107,9 +106,8 @@ const GameUI = () => {
         center
         distanceFactor={10}
       >
-        <div style={{
+        <div className="pixel-font" style={{
           color: 'rgba(255, 255, 255, 0.7)',
-          fontFamily: "'Press Start 2P', cursive",
           fontSize: '10px',
           whiteSpace: 'nowrap',
         }}>

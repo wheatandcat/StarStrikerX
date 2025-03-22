@@ -11,7 +11,7 @@ import GameOverScreen from "./components/ui/GameOverScreen";
 import StageClearScreen from "./components/ui/StageClearScreen";
 import LeaderboardModal from "./components/ui/LeaderboardModal";
 import { useGradius } from "./lib/stores/useGradius";
-import "@fontsource/inter";
+// Removed inter font import in favor of using the pixel-font class
 
 // Define control keys for the game
 const keyboardMap = [
