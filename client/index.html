@@ -13,45 +13,53 @@
     <!-- Google Fontsの参照は削除 -->
     
     <style>
-      /* フォント読み込み前にちらつきを防止 */
-      html {
-        font-display: optional;
+      /* サーバーから直接ローカルフォントが読み込まれるようにするためのパス補正 */
+      @font-face {
+        font-family: 'Press Start 2P';
+        src: local('Press Start 2P'),
+             url('/fonts/PressStart2P-Regular.woff2') format('woff2');
+        font-weight: normal;
+        font-style: normal;
+        font-display: swap;
       }
       
-      /* ゲームUI用CSS変数を定義してJSから参照できるようにする */
+      @font-face {
+        font-family: 'VT323';
+        src: local('VT323'),
+             url('/fonts/VT323-Regular.woff2') format('woff2');
+        font-weight: normal;
+        font-style: normal;
+        font-display: swap;
+      }
+      
+      /* ゲームUI用CSS変数 */
       :root {
-        --game-font: 'Press Start 2P', 'VT323', monospace;
+        --game-font: 'Press Start 2P', 'VT323', monospace, sans-serif;
       }
       
-      /* スタイル適用 */
+      /* フォント適用スタイル */
       .pixel-font {
-        font-family: 'Press Start 2P', 'VT323', monospace;
+        font-family: 'Press Start 2P', 'VT323', monospace, sans-serif !important;
         letter-spacing: -0.05em;
         font-weight: normal;
         text-transform: uppercase;
       }
       
-      /* ページの読み込み時にちらつきを防止 */
+      /* ページ読み込み最適化 */
       body {
+        font-family: system-ui, -apple-system, sans-serif;
         visibility: visible !important;
-        font-family: sans-serif; /* ベースフォント設定 */
+        opacity: 1;
+        transition: opacity 0.2s ease-in-out;
       }
       
-      /* フォントフェイスを直接定義 */
-      @font-face {
-        font-family: 'Press Start 2P';
-        src: url('/fonts/PressStart2P-Regular.woff2') format('woff2');
-        font-weight: normal;
-        font-style: normal;
-        font-display: block;
+      /* フォント読み込み状態表示 */
+      .fonts-loading {
+        /* フォント読み込み中のスタイル */
       }
       
-      @font-face {
-        font-family: 'VT323';
-        src: url('/fonts/VT323-Regular.woff2') format('woff2');
-        font-weight: normal;
-        font-style: normal;
-        font-display: block;
+      .fonts-loaded {
+        /* フォント読み込み完了後のスタイル */
       }
     </style>
   </head>

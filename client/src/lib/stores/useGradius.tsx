@@ -297,8 +297,17 @@ export const useGradius = create<GradiusState>()(
     },
     
     removeEnemy: (id) => {
+      // 安全に状態更新を行うため、参照渡しではなくコピーしたデータで処理
       const { enemies } = get();
-      set({ enemies: enemies.filter(enemy => enemy.id !== id) });
+      
+      // コンソールで状態変化を追跡
+      console.log(`Defeating enemy ${id} at position [${enemies.find(e => e.id === id)?.position}]`);
+      
+      // 安全な方法で配列をフィルタリング
+      const updatedEnemies = enemies.filter(enemy => enemy.id !== id);
+      
+      // 状態を一度のステップで更新（バッチ処理）
+      set({ enemies: updatedEnemies });
     },
     
     spawnBoss: () => {
@@ -312,34 +321,58 @@ export const useGradius = create<GradiusState>()(
     },
     
     damageBoss: (amount) => {
-      const { bossHealth, bossActive } = get();
-      if (!bossActive) return;
+      const { bossHealth, bossActive, gamePhase } = get();
       
-      const newHealth = bossHealth - amount;
+      // ボスがアクティブでない、または既に他のゲームフェーズに移行している場合は処理しない
+      if (!bossActive || gamePhase !== "playing") return;
+      
+      // 新しい体力を計算
+      const newHealth = Math.max(0, bossHealth - amount);
+      
+      // デバッグログ
+      console.log(`Boss damaged: ${amount} damage, health: ${bossHealth} -> ${newHealth}`);
       
       if (newHealth <= 0) {
-        // First increment score and then deactivate boss
+        // まずスコアを増加させる
         get().incrementScore(1000);
+        console.log("Boss defeated! Clearing stage");
         
-        // Use setTimeout to give a slight delay before clearing the stage
-        // This helps prevent rendering issues
-        setTimeout(() => {
+        // ボス撃破時の処理を安全に行う
+        // レンダリングの問題を防ぐために少し遅延を入れる
+        const stageClearTimer = window.setTimeout(() => {
+          // 現在のゲームフェーズを再確認して安全に状態を更新
           if (get().gamePhase === "playing") {
+            // ステートを一度にまとめて更新
             set({ 
               bossActive: false,
               bossHealth: 0
             });
+            
+            // ステージクリア処理を呼び出す
             get().stageClear();
           }
-        }, 100);
+        }, 200); // 少し長めの遅延を設定
+        
+        // メモリリーク防止のためにクリーンアップ関数を返す
+        return () => window.clearTimeout(stageClearTimer);
       } else {
+        // 通常のダメージ処理
         set({ bossHealth: newHealth });
       }
     },
     
     // Bullet actions
     removeBullet: (id) => {
+      // より安全なバレット削除処理
       const { bullets } = get();
+      
+      // debugログを追加して追跡可能に
+      const bullet = bullets.find(b => b.id === id);
+      if (bullet) {
+        console.log(`Removing bullet ${id} at position [${bullet.position}]`);
+      }
+      
+      // 状態更新を一度のステップで行う
       set({ bullets: bullets.filter(bullet => bullet.id !== id) });
     },
     
@@ -355,17 +388,40 @@ export const useGradius = create<GradiusState>()(
           ? [position[0], position[1]]
           : [0, 0]; // Default position if invalid
       
+      // 既存のパワーアップが多すぎる場合は追加しない（パフォーマンス対策）
+      if (powerUps.length >= 5) {
+        console.log("Too many power-ups on screen, skipping spawn");
+        return;
+      }
+      
+      // ユニークIDを生成
+      const powerUpId = `powerup_${Date.now()}_${Math.random().toString(16).slice(2)}`;
+      
+      // 新しいパワーアップを作成
       const newPowerUp = {
-        id: `powerup_${Date.now()}_${Math.random().toString(16).slice(2)}`,
+        id: powerUpId,
         type: randomType,
         position: safePosition
       };
       
+      // ログ出力
+      console.log(`Spawning power-up at [${safePosition}]`);
+      
+      // 安全に状態を更新
       set({ powerUps: [...powerUps, newPowerUp] });
     },
     
     removePowerUp: (id) => {
+      // パワーアップを安全に削除
       const { powerUps } = get();
+      
+      // デバッグログを追加
+      const powerUp = powerUps.find(p => p.id === id);
+      if (powerUp) {
+        console.log(`Collecting power-up ${id} (${powerUp.type}) at position [${powerUp.position}]`);
+      }
+      
+      // 状態更新を一度のステップで行う
       set({ powerUps: powerUps.filter(powerUp => powerUp.id !== id) });
     },
     
