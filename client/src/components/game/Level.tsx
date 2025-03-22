@@ -81,14 +81,30 @@ const Level: React.FC<LevelProps> = ({ viewport: canvasViewport }) => {
   // Get screen dimensions from three.js
   const { viewport: threeViewport } = useThree();
   
-  // ポーズキー用のエフェクト
+  // ポーズキー用のエフェクト - 複数のキーの同時押下を防ぐためのフラグ
+  const pauseKeyRef = useRef({
+    isPressed: false, 
+    lastPressTime: 0
+  });
+  
   useEffect(() => {
     // ポーズキーのサブスクリプション
     const unsubscribePause = subscribeKeys(
       (state) => state.pause,
       (pressed) => {
+        // キーが押されたとき
         if (pressed) {
-          useGradius.getState().togglePause();
+          const now = Date.now();
+          // 連続したトグル操作を防ぐために、前回の操作から300ms以上経過していることを確認
+          if (!pauseKeyRef.current.isPressed && now - pauseKeyRef.current.lastPressTime > 300) {
+            console.log("Pause key triggered - toggling pause state");
+            useGradius.getState().togglePause();
+            pauseKeyRef.current.isPressed = true;
+            pauseKeyRef.current.lastPressTime = now;
+          }
+        } else {
+          // キーが離されたとき
+          pauseKeyRef.current.isPressed = false;
         }
       }
     );

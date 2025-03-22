@@ -18,17 +18,8 @@ const Player = () => {
   const playerRef = useRef<THREE.Group>(null);
   const engineRef = useRef<THREE.Mesh>(null);
   
-  // ポーズ機能の制御
-  const pausePressed = useKeyboardControls<Controls>(state => state.pause);
-  
-  // ポーズキー（ESCまたはP）が押されたらトグル
-  useEffect(() => {
-    // pausePressedが変更された時（キーが押された時）のみ実行
-    if (pausePressed) {
-      console.log("Pause key pressed");
-      togglePause();
-    }
-  }, [pausePressed, togglePause]);
+  // Note: ポーズ機能の制御はLevel.tsxで行うため、
+  // この部分は削除しました (重複操作を防ぐため)
   
   // For blinking when invulnerable
   useFrame((state) => {

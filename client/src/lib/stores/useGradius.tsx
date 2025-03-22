@@ -105,16 +105,28 @@ export const useGradius = create<GradiusState>()(
       const { gamePhase } = get();
       const audioStore = useAudio.getState();
       
-      // ゲームプレイ中のみポーズ可能
+      console.log(`Toggle pause called. Current state: ${gamePhase}`);
+      
+      // ゲームプレイ中のみポーズ可能、またはポーズ中のみレジューム可能
       if (gamePhase === "playing") {
+        console.log("Changing state from playing to paused");
         set({ gamePhase: "paused" });
         audioStore.pauseAllSounds(); // 全ての音を一時停止
         console.log("Game paused");
       } else if (gamePhase === "paused") {
+        console.log("Changing state from paused to playing");
         set({ gamePhase: "playing" });
         audioStore.resumeBackgroundMusic(); // BGM再開
         console.log("Game resumed");
+      } else {
+        console.log(`No state change - can only toggle pause when playing or paused, current: ${gamePhase}`);
       }
+      
+      // 変更が反映されたことを確認
+      setTimeout(() => {
+        const newState = get().gamePhase;
+        console.log(`State after toggle: ${newState}`);
+      }, 10);
     },
     
     // Actions
