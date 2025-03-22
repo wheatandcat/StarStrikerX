@@ -134,9 +134,8 @@ const LeaderboardModal = ({ onClose, currentScore, playerName }: LeaderboardModa
         <Card className="border-2 border-yellow-600 bg-gray-900 text-white shadow-lg shadow-yellow-500/20">
           <CardHeader className="text-center pb-2">
             <CardTitle 
-              className="text-2xl font-bold mb-2 text-yellow-400"
+              className="text-2xl font-bold mb-2 text-yellow-400 pixel-font"
               style={{ 
-                fontFamily: "'Press Start 2P', cursive",
                 textShadow: "0 0 10px #ffcc00, 0 0 20px #cc9900",
                 fontSize: '20px'
               }}
@@ -147,14 +146,14 @@ const LeaderboardModal = ({ onClose, currentScore, playerName }: LeaderboardModa
           
           <CardContent className="space-y-4">
             {isLoading ? (
-              <div className="text-center py-6">Loading leaderboard...</div>
+              <div className="text-center py-6 pixel-font">Loading leaderboard...</div>
             ) : error ? (
-              <div className="text-center text-red-400 py-6">{error}</div>
+              <div className="text-center text-red-400 py-6 pixel-font">{error}</div>
             ) : (
               <div className="space-y-4">
                 <table className="w-full">
                   <thead>
-                    <tr className="text-xs text-gray-400" style={{ fontFamily: "'Press Start 2P', cursive", fontSize: '10px' }}>
+                    <tr className="text-xs text-gray-400 pixel-font" style={{ fontSize: '10px' }}>
                       <th className="pb-2 text-left">RANK</th>
                       <th className="pb-2 text-left">PILOT</th>
                       <th className="pb-2 text-right">SCORE</th>
@@ -164,12 +163,12 @@ const LeaderboardModal = ({ onClose, currentScore, playerName }: LeaderboardModa
                     {leaderboard.map((entry, index) => (
                       <tr 
                         key={entry.id} 
-                        className={`${
+                        className={`pixel-font ${
                           playerName === entry.name && currentScore === entry.score 
                             ? 'text-green-400' 
                             : 'text-white'
                         }`}
-                        style={{ fontFamily: "'Press Start 2P', cursive", fontSize: '12px' }}
+                        style={{ fontSize: '12px' }}
                       >
                         <td className="py-1 text-left">{index + 1}</td>
                         <td className="py-1 text-left">{entry.name}</td>
@@ -182,16 +181,16 @@ const LeaderboardModal = ({ onClose, currentScore, playerName }: LeaderboardModa
                 {isHighScore && !isSubmitted && (
                   <div className="text-center py-2">
                     <div 
-                      className="text-yellow-300 mb-2"
-                      style={{ fontFamily: "'Press Start 2P', cursive", fontSize: '12px' }}
+                      className="text-yellow-300 mb-2 pixel-font"
+                      style={{ fontSize: '12px' }}
                     >
                       NEW HIGH SCORE!
                     </div>
                     <Button
                       onClick={submitScore}
                       disabled={isSubmitting}
-                      className="w-full bg-yellow-700 hover:bg-yellow-600 text-white border border-yellow-500"
-                      style={{ fontFamily: "'Press Start 2P', cursive", fontSize: '12px' }}
+                      className="w-full bg-yellow-700 hover:bg-yellow-600 text-white border border-yellow-500 pixel-font"
+                      style={{ fontSize: '12px' }}
                     >
                       {isSubmitting ? "SUBMITTING..." : "SUBMIT SCORE"}
                     </Button>
@@ -202,8 +201,7 @@ const LeaderboardModal = ({ onClose, currentScore, playerName }: LeaderboardModa
             
             <Button 
               onClick={onClose}
-              className="w-full mt-4 bg-blue-700 hover:bg-blue-600 text-white"
-              style={{ fontFamily: "'Press Start 2P', cursive" }}
+              className="w-full mt-4 bg-blue-700 hover:bg-blue-600 text-white pixel-font"
             >
               CLOSE
             </Button>
