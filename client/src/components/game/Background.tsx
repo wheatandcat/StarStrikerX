@@ -121,7 +121,13 @@ const Background = () => {
         <bufferGeometry>
           <bufferAttribute
             attach="attributes-position"
-            array={new Float32Array(300 * 3).map(() => (Math.random() - 0.5) * 100)}
+            array={(() => {
+              const arr = new Float32Array(300 * 3);
+              for (let i = 0; i < 300 * 3; i++) {
+                arr[i] = (Math.random() - 0.5) * 100;
+              }
+              return arr;
+            })()}
             count={300}
             itemSize={3}
           />
@@ -134,13 +140,25 @@ const Background = () => {
         <bufferGeometry>
           <bufferAttribute
             attach="attributes-position"
-            array={new Float32Array(200 * 3).map(() => (Math.random() - 0.5) * 50)}
+            array={(() => {
+              const arr = new Float32Array(200 * 3);
+              for (let i = 0; i < 200 * 3; i++) {
+                arr[i] = (Math.random() - 0.5) * 50;
+              }
+              return arr;
+            })()}
             count={200}
             itemSize={3}
           />
           <bufferAttribute
             attach="attributes-color"
-            array={new Float32Array(200 * 3).map(() => Math.random() * 0.3 + 0.1)}
+            array={(() => {
+              const arr = new Float32Array(200 * 3);
+              for (let i = 0; i < 200 * 3; i++) {
+                arr[i] = Math.random() * 0.3 + 0.1;
+              }
+              return arr;
+            })()}
             count={200}
             itemSize={3}
           />
