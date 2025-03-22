@@ -94,7 +94,7 @@ function App() {
         newFov = 70 - (aspectRatio - 1) * 20;
       }
       
-      console.log(`Window resized: ${window.innerWidth}x${window.innerHeight}, AR: ${aspectRatio.toFixed(2)}, FOV: ${newFov.toFixed(1)}`);
+      console.log(`Viewport adjusted: ${window.innerWidth}x${window.innerHeight}, AR: ${aspectRatio.toFixed(2)}, FOV: ${newFov.toFixed(1)}`);
       
       setViewport({
         fov: newFov,

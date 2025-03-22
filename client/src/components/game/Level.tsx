@@ -79,7 +79,7 @@ const Level: React.FC<LevelProps> = ({ viewport: canvasViewport }) => {
   const [subscribeKeys, getKeys] = useKeyboardControls<Controls>();
   
   // Get screen dimensions from three.js
-  const { viewport } = useThree();
+  const { viewport: threeViewport } = useThree();
   
   // Create a ref to track boss active state to avoid stale closures
   const isBossActiveRef = useRef(bossActive);
@@ -137,9 +137,29 @@ const Level: React.FC<LevelProps> = ({ viewport: canvasViewport }) => {
     if (keys.left) x -= PLAYER_SPEED;
     if (keys.right) x += PLAYER_SPEED;
     
+    // Get game bounds based on viewport and aspect ratio
+    const gameRatio = canvasViewport.aspectRatio;
+    
+    // Calculate game bounds dynamically based on aspect ratio
+    // The base game area is designed for a 2:1 aspect ratio (GAME_WIDTH = 20, GAME_HEIGHT = 10)
+    let horizontalLimit = 9; // Default for aspect ratio = 2
+    let verticalLimit = 4.5; // Default
+    
+    // Adjust horizontal boundary for wider/narrower screens
+    if (gameRatio > 2) {
+      // Wider screens - player can't move all the way to the edge
+      horizontalLimit = horizontalLimit * (2 / gameRatio);
+    } else if (gameRatio < 1) {
+      // Very tall/narrow screens
+      horizontalLimit = 8; // Restrict horizontal movement more
+      verticalLimit = 6;   // Allow more vertical movement
+    }
+    
+    console.log(`Game bounds: horizontal=${horizontalLimit.toFixed(1)}, vertical=${verticalLimit.toFixed(1)}, ratio=${gameRatio.toFixed(2)}`);
+    
     // Clamp player position within game bounds
-    x = Math.max(-9, Math.min(9, x));
-    y = Math.max(-4.5, Math.min(4.5, y));
+    x = Math.max(-horizontalLimit, Math.min(horizontalLimit, x));
+    y = Math.max(-verticalLimit, Math.min(verticalLimit, y));
     
     // Only update position if it changed
     if (x !== playerPosition[0] || y !== playerPosition[1]) {
