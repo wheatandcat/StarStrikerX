@@ -78,7 +78,7 @@ const Player = () => {
       scale={[PLAYER_SIZE * 2.5, PLAYER_SIZE * 2.5, PLAYER_SIZE * 2.5]}
       rotation={[0, 0, 0]}
     >
-      {/* 3Dモデルの宇宙船 */}
+      {/* 3D spaceship with enhanced effects */}
       {modelLoaded ? (
         <Suspense fallback={
           <mesh castShadow>
@@ -86,7 +86,22 @@ const Player = () => {
             <meshStandardMaterial color="#FFFFFF" />
           </mesh>
         }>
+          {/* Main ship model */}
           <primitive object={playerModel.clone()} castShadow receiveShadow />
+          
+          {/* Shield effect when invulnerable */}
+          {isPlayerInvulnerable && (
+            <mesh>
+              <sphereGeometry args={[0.7, 16, 16]} />
+              <meshStandardMaterial 
+                color="#4488ff"
+                emissive="#4488ff"
+                emissiveIntensity={0.3}
+                transparent={true}
+                opacity={0.3}
+              />
+            </mesh>
+          )}
         </Suspense>
       ) : (
         <mesh castShadow>
@@ -95,25 +110,61 @@ const Player = () => {
         </mesh>
       )}
       
-      {/* エンジン光エフェクト */}
+      {/* Engine glow effects - multiple lights for more dynamic look */}
       <pointLight 
         ref={engineGlowRef}
         position={[-0.5, 0, 0]} 
         intensity={1.5} 
-        distance={2} 
+        distance={3} 
         color="#00FFFF"
       />
       
-      {/* 武器レベルインジケーター - モデルの上に表示 */}
+      {/* Secondary engine glows */}
+      <pointLight 
+        position={[-0.5, 0.1, 0]} 
+        intensity={0.8} 
+        distance={1.5} 
+        color="#80FFFF"
+      />
+      
+      <pointLight 
+        position={[-0.5, -0.1, 0]} 
+        intensity={0.8} 
+        distance={1.5} 
+        color="#80FFFF"
+      />
+      
+      {/* Weapon level indicator with improved visual style */}
       <group position={[0, 0.5, 0]}>
+        {/* Base indicator */}
         <mesh>
-          <boxGeometry args={[0.3, 0.1, 0.05]} />
-          <meshBasicMaterial color="#333333" />
+          <boxGeometry args={[0.4, 0.12, 0.05]} />
+          <meshStandardMaterial 
+            color="#333333" 
+            metalness={0.8}
+            roughness={0.2}
+          />
         </mesh>
-        <mesh position={[0, 0, 0.1]}>
-          <boxGeometry args={[0.2, 0.1, 0.01]} />
-          <meshBasicMaterial color={weaponLevelColor} />
+        
+        {/* Active level indicator */}
+        <mesh position={[0, 0, 0.05]}>
+          <boxGeometry args={[0.36, 0.08, 0.05]} />
+          <meshStandardMaterial 
+            color={weaponLevelColor}
+            emissive={weaponLevelColor}
+            emissiveIntensity={0.8}
+            metalness={0.9}
+            roughness={0.1}
+          />
         </mesh>
+        
+        {/* Small glow for the indicator */}
+        <pointLight 
+          position={[0, 0, 0.2]} 
+          intensity={0.4} 
+          distance={0.5} 
+          color={weaponLevelColor}
+        />
       </group>
     </group>
   );

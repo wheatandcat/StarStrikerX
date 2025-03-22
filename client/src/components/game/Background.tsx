@@ -85,6 +85,12 @@ const Background = () => {
   
   return (
     <group>
+      {/* Base skybox - dark space gradient */}
+      <mesh position={[0, 0, -20]}>
+        <planeGeometry args={[100, 60]} />
+        <meshBasicMaterial color="#050418" />
+      </mesh>
+      
       {/* Stars */}
       <group ref={starsRef}>
         {stars.map((star, i) => (
@@ -122,6 +128,44 @@ const Background = () => {
         </bufferGeometry>
         <pointsMaterial size={0.1} color={0xaaaaff} sizeAttenuation={false} />
       </points>
+      
+      {/* Colored space dust */}
+      <points position={[0, 0, -15]}>
+        <bufferGeometry>
+          <bufferAttribute
+            attach="attributes-position"
+            array={new Float32Array(200 * 3).map(() => (Math.random() - 0.5) * 50)}
+            count={200}
+            itemSize={3}
+          />
+          <bufferAttribute
+            attach="attributes-color"
+            array={new Float32Array(200 * 3).map(() => Math.random() * 0.3 + 0.1)}
+            count={200}
+            itemSize={3}
+          />
+        </bufferGeometry>
+        <pointsMaterial 
+          size={0.2} 
+          vertexColors 
+          transparent
+          opacity={0.6}
+        />
+      </points>
+      
+      {/* Distant galaxy */}
+      <mesh position={[15, 8, -18]} rotation={[0, 0, Math.PI / 4]}>
+        <planeGeometry args={[10, 5]} />
+        <meshBasicMaterial 
+          color="#442266" 
+          transparent
+          opacity={0.2}
+          side={THREE.DoubleSide}
+        />
+      </mesh>
+      
+      {/* Ambient light for overall scene brightness */}
+      <ambientLight intensity={0.05} color="#3355ff" />
     </group>
   );
 };

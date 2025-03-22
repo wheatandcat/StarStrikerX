@@ -41,17 +41,36 @@ const PowerUp = ({ powerUp }: { powerUp: any }) => {
   useFrame(({ clock }) => {
     if (!glowRef.current || !groupRef.current) return;
     
+    const time = clock.getElapsedTime();
+    
     // Update glow position directly
     glowRef.current.position.x = powerUp.position[0];
     glowRef.current.position.y = powerUp.position[1];
     
+    // Add pulsing effect to the glow
+    const pulseIntensity = 1.8 + Math.sin(time * 4) * 0.4;
+    if (glowRef.current) {
+      glowRef.current.intensity = pulseIntensity;
+    }
+    
     // Add rotation and hover animations to the model
     if (groupRef.current) {
       // Slow rotation
-      groupRef.current.rotation.y = clock.getElapsedTime() * 0.5;
+      groupRef.current.rotation.y = time * 0.5;
+      // Additional subtle rotation in other axes
+      groupRef.current.rotation.x = Math.sin(time * 0.2) * 0.1;
+      
       // Hover effect
-      const hoverOffset = Math.sin(clock.getElapsedTime() * 3) * 0.05;
+      const hoverOffset = Math.sin(time * 3) * 0.05;
       groupRef.current.position.y = powerUp.position[1] + hoverOffset;
+      
+      // Subtle scale pulsing
+      const scalePulse = 1.0 + Math.sin(time * 2) * 0.03;
+      groupRef.current.scale.set(
+        POWERUP_SIZE * 2.5 * scalePulse,
+        POWERUP_SIZE * 2.5 * scalePulse,
+        POWERUP_SIZE * 2.5 * scalePulse
+      );
     }
   });
   
@@ -63,7 +82,7 @@ const PowerUp = ({ powerUp }: { powerUp: any }) => {
         scale={[POWERUP_SIZE * 2.5, POWERUP_SIZE * 2.5, POWERUP_SIZE * 2.5]}
         rotation={[0, 0, 0]}
       >
-        {/* 3Dモデルのパワーアップ */}
+        {/* 3D model power-up with enhanced effects */}
         {modelLoaded ? (
           <Suspense fallback={
             <mesh castShadow>
@@ -71,11 +90,24 @@ const PowerUp = ({ powerUp }: { powerUp: any }) => {
               <meshStandardMaterial 
                 color={color} 
                 emissive={color} 
-                emissiveIntensity={0.5}
+                emissiveIntensity={0.8}
               />
             </mesh>
           }>
+            {/* Main 3D model */}
             <primitive object={powerupModel.clone()} castShadow receiveShadow />
+            
+            {/* Energy field effect around the power-up */}
+            <mesh scale={[1.1, 1.1, 1.1]}>
+              <sphereGeometry args={[0.4, 16, 16]} />
+              <meshStandardMaterial 
+                color={color} 
+                emissive={color} 
+                emissiveIntensity={0.6}
+                transparent={true}
+                opacity={0.3}
+              />
+            </mesh>
           </Suspense>
         ) : (
           <mesh castShadow>
@@ -83,12 +115,12 @@ const PowerUp = ({ powerUp }: { powerUp: any }) => {
             <meshStandardMaterial 
               color={color} 
               emissive={color} 
-              emissiveIntensity={0.5}
+              emissiveIntensity={0.8}
             />
           </mesh>
         )}
         
-        {/* パワーアップタイプのラベル */}
+        {/* Power-up type label with improved visibility */}
         <Text
           position={[0, 0, 0.5]}
           rotation={[0, 0, 0]}
@@ -97,18 +129,28 @@ const PowerUp = ({ powerUp }: { powerUp: any }) => {
           anchorX="center"
           anchorY="middle"
           font="monospace"
+          outlineWidth={0.02}
+          outlineColor="#000000"
         >
           {label}
         </Text>
       </group>
       
-      {/* Glow effect */}
+      {/* Enhanced glow effect with pulsing */}
       <pointLight 
         ref={glowRef}
         position={[powerUp.position[0], powerUp.position[1], 0]} 
         color={color} 
-        intensity={1.5} 
-        distance={3}
+        intensity={1.8} 
+        distance={4}
+      />
+      
+      {/* Secondary subtle light for added dimension */}
+      <pointLight 
+        position={[powerUp.position[0], powerUp.position[1], 0.5]} 
+        color={0xffffff} 
+        intensity={0.5} 
+        distance={1}
       />
     </group>
   );
