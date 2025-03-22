@@ -128,7 +128,7 @@ const PowerUp = ({ powerUp }: { powerUp: any }) => {
           color="#ffffff"
           anchorX="center"
           anchorY="middle"
-          font="monospace"
+          font="sans-serif" // Changed from monospace to system font
           outlineWidth={0.02}
           outlineColor="#000000"
         >

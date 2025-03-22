@@ -6,7 +6,7 @@ import { BACKGROUND_SCROLL_SPEED, STAR_COUNT } from "@/lib/constants";
 const Background = () => {
   // Create a reference for the stars group
   const starsRef = useRef<THREE.Group>(null);
-  const nebulaRef = useRef<THREE.Mesh>(null);
+  const nebulaRef = useRef<THREE.Group>(null); // Changed from Mesh to Group
   
   // Generate random stars
   const stars = useMemo(() => {

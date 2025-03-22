@@ -37,12 +37,13 @@ const GameUI = () => {
       {/* Score display */}
       <Html position={[-9.5, 5, 0]} transform center className="game-ui-element">
         <div style={{ 
-          fontFamily: 'monospace', /* フォールバック */
+          fontFamily: 'Arial, sans-serif', /* システムフォントを使用 */
           color: 'white', 
           fontSize: '0.6rem',
+          fontWeight: 'bold',
           whiteSpace: 'nowrap',
           textShadow: '0 0 3px #00aaff, 0 0 3px #00aaff'
-        }} className="pixel-font">
+        }}>
           SCORE: {formattedScore}
         </div>
       </Html>
@@ -50,12 +51,13 @@ const GameUI = () => {
       {/* Lives display */}
       <Html position={[8, 5, 0]} transform center className="game-ui-element">
         <div style={{ 
-          fontFamily: 'monospace', /* フォールバック */
+          fontFamily: 'Arial, sans-serif', /* システムフォントを使用 */
           color: 'white', 
           fontSize: '0.6rem',
+          fontWeight: 'bold',
           whiteSpace: 'nowrap',
           textShadow: '0 0 3px #ff0000, 0 0 3px #ff0000'
-        }} className="pixel-font">
+        }}>
           LIVES: {lives}
         </div>
       </Html>
@@ -63,12 +65,13 @@ const GameUI = () => {
       {/* Weapon level display */}
       <Html position={[0, 5, 0]} transform center className="game-ui-element">
         <div style={{ 
-          fontFamily: 'monospace', /* フォールバック */
+          fontFamily: 'Arial, sans-serif', /* システムフォントを使用 */
           color: 'white', 
           fontSize: '0.55rem',
+          fontWeight: 'bold',
           whiteSpace: 'nowrap',
           textShadow: '0 0 3px #00ff00, 0 0 3px #00ff00'
-        }} className="pixel-font">
+        }}>
           WEAPON: {weaponName}
         </div>
       </Html>
@@ -76,12 +79,13 @@ const GameUI = () => {
       {/* Stage display */}
       <Html position={[-5, 5, 0]} transform center className="game-ui-element">
         <div style={{ 
-          fontFamily: 'monospace', /* フォールバック */
+          fontFamily: 'Arial, sans-serif', /* システムフォントを使用 */
           color: 'white', 
           fontSize: '0.55rem',
+          fontWeight: 'bold',
           whiteSpace: 'nowrap',
           textShadow: '0 0 3px #ffff00, 0 0 3px #ffff00'
-        }} className="pixel-font">
+        }}>
           STAGE: {stageNumber}
         </div>
       </Html>
@@ -89,12 +93,13 @@ const GameUI = () => {
       {/* Controls help at bottom */}
       <Html position={[0, -5.3, 0]} transform center className="game-ui-element">
         <div style={{ 
-          fontFamily: 'monospace', /* フォールバック */
+          fontFamily: 'Arial, sans-serif', /* システムフォントを使用 */
           color: 'rgba(255, 255, 255, 0.7)', 
           fontSize: '0.5rem',
+          fontWeight: 'bold',
           whiteSpace: 'nowrap',
           textShadow: '0 0 2px rgba(0, 0, 0, 0.5)'
-        }} className="pixel-font text-center">
+        }} className="text-center">
           ARROWS/WASD: MOVE ・ SPACE: SHOOT ・ ESC/P: PAUSE
         </div>
       </Html>
