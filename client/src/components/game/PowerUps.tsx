@@ -64,7 +64,7 @@ const PowerUp = ({ powerUp }: { powerUp: any }) => {
           color="#ffffff"
           anchorX="center"
           anchorY="middle"
-          font="https://fonts.gstatic.com/s/pressstart2p/v14/e3t4euO8T-267oIAQAu6jDQyK0nS.woff"
+          font="Press Start 2P"
         >
           {label}
         </Text>
