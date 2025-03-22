@@ -1,0 +1,143 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 500">
+  <defs>
+    <radialGradient id="starGradient1" cx="50%" cy="50%" r="50%" fx="50%" fy="50%">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="1" />
+      <stop offset="100%" stop-color="#ffffff" stop-opacity="0" />
+    </radialGradient>
+    
+    <radialGradient id="starGradient2" cx="50%" cy="50%" r="50%" fx="50%" fy="50%">
+      <stop offset="0%" stop-color="#ccccff" stop-opacity="1" />
+      <stop offset="100%" stop-color="#ccccff" stop-opacity="0" />
+    </radialGradient>
+    
+    <radialGradient id="nebulaGradient1" cx="50%" cy="50%" r="70%" fx="30%" fy="30%">
+      <stop offset="0%" stop-color="#3311aa" stop-opacity="0.4" />
+      <stop offset="100%" stop-color="#3311aa" stop-opacity="0" />
+    </radialGradient>
+    
+    <radialGradient id="nebulaGradient2" cx="50%" cy="50%" r="70%" fx="30%" fy="30%">
+      <stop offset="0%" stop-color="#442288" stop-opacity="0.3" />
+      <stop offset="100%" stop-color="#442288" stop-opacity="0" />
+    </radialGradient>
+    
+    <radialGradient id="nebulaGradient3" cx="50%" cy="50%" r="70%" fx="30%" fy="30%">
+      <stop offset="0%" stop-color="#330066" stop-opacity="0.25" />
+      <stop offset="100%" stop-color="#330066" stop-opacity="0" />
+    </radialGradient>
+    
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="2" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+  </defs>
+  
+  <!-- Background color gradient -->
+  <rect x="0" y="0" width="100%" height="100%" fill="#000022" />
+  
+  <!-- Nebula clouds -->
+  <ellipse cx="700" cy="250" rx="300" ry="200" fill="url(#nebulaGradient1)" />
+  <ellipse cx="200" cy="100" rx="250" ry="150" fill="url(#nebulaGradient2)" />
+  <ellipse cx="400" cy="400" rx="350" ry="200" fill="url(#nebulaGradient3)" />
+  
+  <!-- Distant stars (small dots) -->
+  <g>
+    <!-- Row 1 -->
+    <circle cx="50" cy="30" r="1" fill="#ffffff" />
+    <circle cx="120" cy="80" r="1" fill="#aaaaff" />
+    <circle cx="200" cy="40" r="1" fill="#ffffff" />
+    <circle cx="280" cy="90" r="1" fill="#ffffcc" />
+    <circle cx="350" cy="30" r="1" fill="#ffffff" />
+    <circle cx="430" cy="70" r="1" fill="#aaaaff" />
+    <circle cx="510" cy="20" r="1" fill="#ffffff" />
+    <circle cx="580" cy="90" r="1" fill="#ffffcc" />
+    <circle cx="650" cy="40" r="1" fill="#ffffff" />
+    <circle cx="720" cy="80" r="1" fill="#aaaaff" />
+    <circle cx="800" cy="30" r="1" fill="#ffffff" />
+    <circle cx="880" cy="60" r="1" fill="#ffffcc" />
+    <circle cx="950" cy="20" r="1" fill="#ffffff" />
+    
+    <!-- Row 2 -->
+    <circle cx="30" cy="130" r="1" fill="#ffffcc" />
+    <circle cx="100" cy="160" r="1" fill="#ffffff" />
+    <circle cx="170" cy="140" r="1" fill="#aaaaff" />
+    <circle cx="250" cy="170" r="1" fill="#ffffff" />
+    <circle cx="320" cy="150" r="1" fill="#ffffcc" />
+    <circle cx="400" cy="180" r="1" fill="#ffffff" />
+    <circle cx="480" cy="140" r="1" fill="#aaaaff" />
+    <circle cx="550" cy="170" r="1" fill="#ffffff" />
+    <circle cx="620" cy="130" r="1" fill="#ffffcc" />
+    <circle cx="690" cy="160" r="1" fill="#ffffff" />
+    <circle cx="770" cy="140" r="1" fill="#aaaaff" />
+    <circle cx="850" cy="180" r="1" fill="#ffffff" />
+    <circle cx="920" cy="150" r="1" fill="#ffffcc" />
+    
+    <!-- Row 3 -->
+    <circle cx="40" cy="230" r="1" fill="#aaaaff" />
+    <circle cx="110" cy="260" r="1" fill="#ffffcc" />
+    <circle cx="190" cy="240" r="1" fill="#ffffff" />
+    <circle cx="260" cy="270" r="1" fill="#aaaaff" />
+    <circle cx="330" cy="230" r="1" fill="#ffffcc" />
+    <circle cx="410" cy="250" r="1" fill="#ffffff" />
+    <circle cx="490" cy="230" r="1" fill="#aaaaff" />
+    <circle cx="560" cy="270" r="1" fill="#ffffcc" />
+    <circle cx="630" cy="240" r="1" fill="#ffffff" />
+    <circle cx="700" cy="260" r="1" fill="#aaaaff" />
+    <circle cx="780" cy="230" r="1" fill="#ffffcc" />
+    <circle cx="860" cy="250" r="1" fill="#ffffff" />
+    <circle cx="930" cy="230" r="1" fill="#aaaaff" />
+    
+    <!-- Row 4 -->
+    <circle cx="70" cy="330" r="1" fill="#ffffff" />
+    <circle cx="140" cy="360" r="1" fill="#aaaaff" />
+    <circle cx="220" cy="340" r="1" fill="#ffffcc" />
+    <circle cx="290" cy="370" r="1" fill="#ffffff" />
+    <circle cx="360" cy="350" r="1" fill="#aaaaff" />
+    <circle cx="440" cy="380" r="1" fill="#ffffcc" />
+    <circle cx="520" cy="340" r="1" fill="#ffffff" />
+    <circle cx="590" cy="370" r="1" fill="#aaaaff" />
+    <circle cx="660" cy="350" r="1" fill="#ffffcc" />
+    <circle cx="730" cy="380" r="1" fill="#ffffff" />
+    <circle cx="810" cy="350" r="1" fill="#aaaaff" />
+    <circle cx="890" cy="370" r="1" fill="#ffffcc" />
+    <circle cx="960" cy="340" r="1" fill="#ffffff" />
+    
+    <!-- Row 5 -->
+    <circle cx="60" cy="430" r="1" fill="#aaaaff" />
+    <circle cx="130" cy="460" r="1" fill="#ffffff" />
+    <circle cx="210" cy="440" r="1" fill="#ffffcc" />
+    <circle cx="280" cy="470" r="1" fill="#ffffff" />
+    <circle cx="350" cy="450" r="1" fill="#aaaaff" />
+    <circle cx="430" cy="480" r="1" fill="#ffffff" />
+    <circle cx="510" cy="430" r="1" fill="#ffffcc" />
+    <circle cx="580" cy="460" r="1" fill="#ffffff" />
+    <circle cx="650" cy="440" r="1" fill="#aaaaff" />
+    <circle cx="720" cy="470" r="1" fill="#ffffff" />
+    <circle cx="800" cy="450" r="1" fill="#ffffcc" />
+    <circle cx="870" cy="480" r="1" fill="#ffffff" />
+    <circle cx="940" cy="430" r="1" fill="#aaaaff" />
+  </g>
+  
+  <!-- Medium stars with glow -->
+  <g filter="url(#glow)">
+    <circle cx="100" cy="50" r="1.5" fill="url(#starGradient1)" />
+    <circle cx="300" cy="150" r="1.5" fill="url(#starGradient2)" />
+    <circle cx="500" cy="70" r="1.5" fill="url(#starGradient1)" />
+    <circle cx="700" cy="200" r="1.5" fill="url(#starGradient2)" />
+    <circle cx="900" cy="100" r="1.5" fill="url(#starGradient1)" />
+    <circle cx="200" cy="300" r="1.5" fill="url(#starGradient2)" />
+    <circle cx="400" cy="350" r="1.5" fill="url(#starGradient1)" />
+    <circle cx="600" cy="400" r="1.5" fill="url(#starGradient2)" />
+    <circle cx="800" cy="320" r="1.5" fill="url(#starGradient1)" />
+    <circle cx="150" cy="450" r="1.5" fill="url(#starGradient2)" />
+    <circle cx="850" cy="430" r="1.5" fill="url(#starGradient1)" />
+  </g>
+  
+  <!-- Larger bright stars with more glow -->
+  <g filter="url(#glow)">
+    <circle cx="250" cy="120" r="2" fill="url(#starGradient1)" />
+    <circle cx="650" cy="80" r="2" fill="url(#starGradient1)" />
+    <circle cx="450" cy="300" r="2" fill="url(#starGradient1)" />
+    <circle cx="750" cy="400" r="2" fill="url(#starGradient1)" />
+    <circle cx="150" cy="350" r="2" fill="url(#starGradient1)" />
+  </g>
+</svg>

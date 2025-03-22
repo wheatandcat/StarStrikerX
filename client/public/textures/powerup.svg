@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+  <defs>
+    <linearGradient id="powerupGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#00ffaa" />
+      <stop offset="100%" stop-color="#00cc88" />
+    </linearGradient>
+    
+    <filter id="glow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="2" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+  </defs>
+  
+  <!-- Glow -->
+  <rect x="2" y="2" width="16" height="16" rx="2" fill="#00ffaa" opacity="0.3" filter="url(#glow)" />
+  
+  <!-- Main box -->
+  <rect x="2" y="2" width="16" height="16" rx="2" fill="url(#powerupGradient)" />
+  
+  <!-- Inner details -->
+  <rect x="4" y="4" width="12" height="12" rx="1" fill="none" stroke="#ffffff" stroke-width="0.5" />
+  
+  <!-- Letter "W" for weapon -->
+  <text x="10" y="14" font-family="Arial" font-size="10" font-weight="bold" text-anchor="middle" fill="#ffffff">W</text>
+</svg>

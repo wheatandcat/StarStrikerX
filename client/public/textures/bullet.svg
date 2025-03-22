@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 10 6">
+  <defs>
+    <linearGradient id="bulletGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#00ffff" />
+      <stop offset="100%" stop-color="#00ccff" />
+    </linearGradient>
+    
+    <linearGradient id="enemyBulletGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#ff6600" />
+      <stop offset="100%" stop-color="#ff3300" />
+    </linearGradient>
+    
+    <filter id="playerGlow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="1" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+    
+    <filter id="enemyGlow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="1" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+  </defs>
+  
+  <!-- Player bullet (top half) -->
+  <g transform="translate(0, 0)">
+    <!-- Glow -->
+    <ellipse cx="5" cy="1.5" rx="5" ry="1.5" fill="#00ffff" opacity="0.5" filter="url(#playerGlow)" />
+    
+    <!-- Bullet body -->
+    <ellipse cx="5" cy="1.5" rx="4" ry="1" fill="url(#bulletGradient)" />
+  </g>
+  
+  <!-- Enemy bullet (bottom half) -->
+  <g transform="translate(0, 3)">
+    <!-- Glow -->
+    <polygon points="5,0 7,1.5 5,3 3,1.5" fill="#ff4400" opacity="0.5" filter="url(#enemyGlow)" />
+    
+    <!-- Bullet body -->
+    <polygon points="5,0.5 6.5,1.5 5,2.5 3.5,1.5" fill="url(#enemyBulletGradient)" />
+  </g>
+</svg>

@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+  <defs>
+    <linearGradient id="enemyGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ff3333" />
+      <stop offset="100%" stop-color="#cc0000" />
+    </linearGradient>
+    
+    <radialGradient id="glowGradient" cx="50%" cy="50%" r="50%" fx="50%" fy="50%">
+      <stop offset="0%" stop-color="#ff6666" stop-opacity="0.8" />
+      <stop offset="100%" stop-color="#ff0000" stop-opacity="0" />
+    </radialGradient>
+  </defs>
+  
+  <!-- Glow effect -->
+  <circle cx="10" cy="10" r="10" fill="url(#glowGradient)" />
+  
+  <!-- Main body -->
+  <path d="M2,10 L10,2 L18,10 L10,18 Z" fill="url(#enemyGradient)" />
+  
+  <!-- Center eye -->
+  <circle cx="10" cy="10" r="3" fill="#ffcc00" />
+  <circle cx="10" cy="10" r="1.5" fill="#ff0000" />
+  
+  <!-- Details -->
+  <path d="M7,7 L13,7 L13,13 L7,13 Z" fill="none" stroke="#660000" stroke-width="0.5" />
+</svg>

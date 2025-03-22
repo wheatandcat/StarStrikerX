@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 30">
+  <defs>
+    <linearGradient id="bossGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ff6600" />
+      <stop offset="100%" stop-color="#cc3300" />
+    </linearGradient>
+    
+    <radialGradient id="core1Gradient" cx="50%" cy="50%" r="50%" fx="50%" fy="50%">
+      <stop offset="0%" stop-color="#ff0000" stop-opacity="1" />
+      <stop offset="100%" stop-color="#cc0000" stop-opacity="0.5" />
+    </radialGradient>
+    
+    <radialGradient id="core2Gradient" cx="50%" cy="50%" r="50%" fx="50%" fy="50%">
+      <stop offset="0%" stop-color="#0088ff" stop-opacity="1" />
+      <stop offset="100%" stop-color="#0044cc" stop-opacity="0.5" />
+    </radialGradient>
+  </defs>
+  
+  <!-- Main body -->
+  <ellipse cx="20" cy="15" rx="20" ry="15" fill="url(#bossGradient)" />
+  
+  <!-- Core 1 -->
+  <circle cx="25" cy="8" r="6" fill="url(#core1Gradient)" />
+  
+  <!-- Core 2 -->
+  <circle cx="25" cy="22" r="6" fill="url(#core2Gradient)" />
+  
+  <!-- Armor plates -->
+  <path d="M10,5 L30,5 L28,2 L12,2 Z" fill="#666666" />
+  <path d="M10,25 L30,25 L28,28 L12,28 Z" fill="#666666" />
+  
+  <!-- Gun 1 -->
+  <rect x="2" y="8" width="8" height="3" rx="1" fill="#444444" />
+  
+  <!-- Gun 2 -->
+  <rect x="2" y="19" width="8" height="3" rx="1" fill="#444444" />
+  
+  <!-- Health bar background -->
+  <rect x="10" y="1" width="20" height="2" rx="1" fill="#333333" />
+  
+  <!-- Health bar fill -->
+  <rect x="10" y="1" width="20" height="2" rx="1" fill="#ff3333" />
+</svg>
