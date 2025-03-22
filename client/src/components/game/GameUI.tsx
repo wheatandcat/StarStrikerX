@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { useThree } from '@react-three/fiber';
-import { Text, Html } from '@react-three/drei';
+import { Html } from '@react-three/drei';
 import { useGradius } from '@/lib/stores/useGradius';
 import { WeaponLevel } from '@/lib/types';
 
@@ -28,71 +28,66 @@ const GameUI = () => {
         return "Single Shot";
     }
   }, [weaponLevel]);
-  
+
+  // 通常のThree.jsのTextコンポーネントではなく、
+  // Htmlコンポーネントを使用してフォント問題を解決
   return (
     <group>
       {/* Score display */}
-      <Text
-        position={[-9.5, 5, 0]}
-        fontSize={0.4}
-        color="white"
-        anchorX="center"
-        anchorY="middle"
-        outlineWidth={0.02}
-        outlineColor="#00aaff"
-        font="/fonts/VT323-Regular.ttf"
-      >
-        {`SCORE: ${formattedScore}`}
-      </Text>
+      <Html position={[-9.5, 5, 0]} transform center>
+        <div className="pixel-font" style={{ 
+          color: 'white', 
+          fontSize: '0.6rem',
+          whiteSpace: 'nowrap',
+          textShadow: '0 0 3px #00aaff, 0 0 3px #00aaff'
+        }}>
+          SCORE: {formattedScore}
+        </div>
+      </Html>
       
       {/* Lives display */}
-      <Text
-        position={[8, 5, 0]}
-        fontSize={0.4}
-        color="white"
-        anchorX="center"
-        anchorY="middle"
-        outlineWidth={0.02}
-        outlineColor="#ff0000"
-        font="/fonts/VT323-Regular.ttf"
-      >
-        {`LIVES: ${lives}`}
-      </Text>
+      <Html position={[8, 5, 0]} transform center>
+        <div className="pixel-font" style={{ 
+          color: 'white', 
+          fontSize: '0.6rem',
+          whiteSpace: 'nowrap',
+          textShadow: '0 0 3px #ff0000, 0 0 3px #ff0000'
+        }}>
+          LIVES: {lives}
+        </div>
+      </Html>
       
       {/* Weapon level display */}
-      <Text
-        position={[0, 5, 0]}
-        fontSize={0.35}
-        color="white"
-        anchorX="center"
-        anchorY="middle"
-        outlineWidth={0.02}
-        outlineColor="#00ff00"
-        font="/fonts/VT323-Regular.ttf"
-      >
-        {`WEAPON: ${weaponName}`}
-      </Text>
+      <Html position={[0, 5, 0]} transform center>
+        <div className="pixel-font" style={{ 
+          color: 'white', 
+          fontSize: '0.55rem',
+          whiteSpace: 'nowrap',
+          textShadow: '0 0 3px #00ff00, 0 0 3px #00ff00'
+        }}>
+          WEAPON: {weaponName}
+        </div>
+      </Html>
       
       {/* Stage display */}
-      <Text
-        position={[-5, 5, 0]}
-        fontSize={0.35}
-        color="white"
-        anchorX="center"
-        anchorY="middle"
-        outlineWidth={0.02}
-        outlineColor="#ffff00"
-        font="/fonts/VT323-Regular.ttf"
-      >
-        {`STAGE: ${stageNumber}`}
-      </Text>
+      <Html position={[-5, 5, 0]} transform center>
+        <div className="pixel-font" style={{ 
+          color: 'white', 
+          fontSize: '0.55rem',
+          whiteSpace: 'nowrap',
+          textShadow: '0 0 3px #ffff00, 0 0 3px #ffff00'
+        }}>
+          STAGE: {stageNumber}
+        </div>
+      </Html>
       
-      {/* Controls help at bottom - HTML版に変更 */}
+      {/* Controls help at bottom */}
       <Html position={[0, -5.3, 0]} transform center>
         <div className="pixel-font text-center" style={{ 
           color: 'rgba(255, 255, 255, 0.7)', 
-          fontSize: '0.6rem',
-          whiteSpace: 'nowrap'
+          fontSize: '0.5rem',
+          whiteSpace: 'nowrap',
+          textShadow: '0 0 2px rgba(0, 0, 0, 0.5)'
         }}>
           ARROWS/WASD: MOVE ・ SPACE: SHOOT ・ ESC/P: PAUSE
         </div>
