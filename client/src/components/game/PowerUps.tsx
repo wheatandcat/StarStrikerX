@@ -1,6 +1,6 @@
 import { useRef, useState, useEffect, Suspense } from "react";
 import { useFrame } from "@react-three/fiber";
-import { useGLTF, Text } from "@react-three/drei";
+import { useGLTF, Html } from "@react-three/drei";
 import * as THREE from "three";
 import { GLTF } from "three-stdlib";
 import { useGradius } from "@/lib/stores/useGradius";
@@ -121,18 +121,22 @@ const PowerUp = ({ powerUp }: { powerUp: any }) => {
         )}
         
         {/* Power-up type label with improved visibility */}
-        <Text
+        <Html
           position={[0, 0, 0.5]}
-          rotation={[0, 0, 0]}
-          fontSize={0.4}
-          color="#ffffff"
-          anchorX="center"
-          anchorY="middle"
-          outlineWidth={0.02}
-          outlineColor="#000000"
+          transform
+          center
         >
-          {label}
-        </Text>
+          <div style={{ 
+            fontFamily: 'Arial, sans-serif',
+            color: 'white', 
+            fontSize: '8px',
+            fontWeight: 'bold',
+            textAlign: 'center',
+            textShadow: '0 0 2px #000000, 0 0 2px #000000'
+          }}>
+            {label}
+          </div>
+        </Html>
       </group>
       
       {/* Enhanced glow effect with pulsing */}
