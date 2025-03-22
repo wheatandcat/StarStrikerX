@@ -33,9 +33,8 @@ const GameOverScreen = ({ score, onRestart, onLeaderboard }: GameOverScreenProps
         <Card className="border-2 border-red-700 bg-gray-900 text-white shadow-lg shadow-red-700/30">
           <CardHeader className="text-center pb-2">
             <CardTitle 
-              className="text-3xl font-bold mb-2 text-red-500"
+              className="text-3xl font-bold mb-2 text-red-500 pixel-font"
               style={{ 
-                fontFamily: "'Press Start 2P', cursive",
                 textShadow: "0 0 10px #ff0000, 0 0 20px #cc0000"
               }}
             >
@@ -46,9 +45,8 @@ const GameOverScreen = ({ score, onRestart, onLeaderboard }: GameOverScreenProps
           <CardContent className="space-y-6">
             <div className="text-center space-y-6">
               <div 
-                className="text-xl text-white mb-2"
+                className="text-xl text-white mb-2 pixel-font"
                 style={{ 
-                  fontFamily: "'Press Start 2P', cursive",
                   fontSize: '14px'
                 }}
               >
@@ -56,9 +54,8 @@ const GameOverScreen = ({ score, onRestart, onLeaderboard }: GameOverScreenProps
               </div>
               
               <div 
-                className="text-3xl text-yellow-300 mb-6"
+                className="text-3xl text-yellow-300 mb-6 pixel-font"
                 style={{ 
-                  fontFamily: "'Press Start 2P', cursive",
                   textShadow: "0 0 5px #ffaa00, 0 0 10px #ff8800"
                 }}
               >
@@ -67,8 +64,7 @@ const GameOverScreen = ({ score, onRestart, onLeaderboard }: GameOverScreenProps
               
               <Button 
                 onClick={onRestart}
-                className="w-full mb-2 bg-red-700 hover:bg-red-600 text-white border border-red-500"
-                style={{ fontFamily: "'Press Start 2P', cursive" }}
+                className="w-full mb-2 bg-red-700 hover:bg-red-600 text-white border border-red-500 pixel-font"
               >
                 TRY AGAIN
               </Button>
@@ -76,8 +72,8 @@ const GameOverScreen = ({ score, onRestart, onLeaderboard }: GameOverScreenProps
               <Button 
                 onClick={onLeaderboard} 
                 variant="outline"
-                className="w-full bg-transparent hover:bg-gray-800 text-red-400 border border-red-500"
-                style={{ fontFamily: "'Press Start 2P', cursive", fontSize: '12px' }}
+                className="w-full bg-transparent hover:bg-gray-800 text-red-400 border border-red-500 pixel-font"
+                style={{ fontSize: '12px' }}
               >
                 LEADERBOARD
               </Button>
@@ -86,8 +82,8 @@ const GameOverScreen = ({ score, onRestart, onLeaderboard }: GameOverScreenProps
           
           <CardFooter className="flex justify-center pt-0">
             <p 
-              className="text-[10px] text-gray-500 text-center"
-              style={{ fontFamily: "'Press Start 2P', cursive", fontSize: '8px' }}
+              className="text-[10px] text-gray-500 text-center pixel-font"
+              style={{ fontSize: '8px' }}
             >
               DEFEAT IS TEMPORARY. GLORY IS ETERNAL.
             </p>

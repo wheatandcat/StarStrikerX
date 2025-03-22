@@ -2,24 +2,23 @@
 @tailwind components;
 @tailwind utilities;
 
-/* プロジェクトにフォントを定義 - データURLとして埋め込み */
+/* ピクセルアート風フォント設定 */
 @font-face {
-  font-family: 'Press Start 2P';
-  src: local('Press Start 2P'), 
-       url('/fonts/pressstart2p.woff') format('woff');
-  font-weight: normal;
-  font-style: normal;
-  font-display: optional;
-}
-
-/* フォントのフォールバック */
-@font-face {
-  font-family: 'Press Start 2P Fallback';
+  font-family: 'Pixel';
   src: local('Courier New'), 
        local('Courier'), 
        local('monospace');
   font-weight: normal;
   font-style: normal;
+  font-display: block;
+}
+
+/* ピクセルアート風フォントスタイル */
+.pixel-font {
+  font-family: 'Pixel', monospace;
+  letter-spacing: -0.05em;
+  font-weight: bold;
+  text-transform: uppercase;
 }
 
 @layer base {

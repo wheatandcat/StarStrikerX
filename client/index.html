@@ -4,40 +4,36 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Gradius-Style Shooter</title>
-    <!-- ローカルフォントを優先的に使用 -->
+    <!-- ピクセルアートスタイルのフォントをシステムフォントで代替 -->
     <style>
-      /* プリロード用フォント設定 */
+      /* モノスペースフォントを使用してピクセルアート風に見せる */
       @font-face {
-        font-family: 'Press Start 2P';
-        src: local('Press Start 2P'), url('/fonts/pressstart2p.woff') format('woff');
-        font-display: swap;
-      }
-      /* フォントが見つからない場合のフォールバック */
-      @font-face {
-        font-family: 'Press Start 2P Fallback';
+        font-family: 'Pixel';
         src: local('Courier New'), local('Courier'), local('monospace');
+        font-display: block;
       }
-      /* ページの読み込み前にフォントを表示しないようにする */
-      .wf-loading {
-        visibility: hidden;
+      
+      /* スタイル適用 */
+      .pixelfont {
+        font-family: 'Pixel', monospace;
+        letter-spacing: -0.05em;
+        font-weight: bold;
+        text-transform: uppercase;
+      }
+      
+      /* ゲームUI用CSS変数を定義してJSから参照できるようにする */
+      :root {
+        --game-font: 'Pixel', monospace;
+      }
+      
+      /* ページの読み込み時にちらつきを防止 */
+      body {
+        visibility: visible !important;
       }
     </style>
-    <!-- バックアップとしてGoogleフォントも読み込み -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap"
-      rel="stylesheet"
-    />
   </head>
-  <body class="wf-loading">
+  <body>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
-    <script>
-      // フォントが読み込まれたときの処理
-      document.fonts.ready.then(() => {
-        document.body.classList.remove('wf-loading');
-      });
-    </script>
   </body>
 </html>

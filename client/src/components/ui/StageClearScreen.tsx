@@ -41,9 +41,8 @@ const StageClearScreen = ({ score, onContinue }: StageClearScreenProps) => {
         <Card className="border-2 border-blue-600 bg-gray-900 text-white shadow-lg shadow-blue-600/30">
           <CardHeader className="text-center pb-2">
             <CardTitle 
-              className="text-3xl font-bold mb-2 text-green-400"
+              className="text-3xl font-bold mb-2 text-green-400 pixel-font"
               style={{ 
-                fontFamily: "'Press Start 2P', cursive",
                 textShadow: "0 0 10px #00cc00, 0 0 20px #008800"
               }}
             >
@@ -54,9 +53,8 @@ const StageClearScreen = ({ score, onContinue }: StageClearScreenProps) => {
           <CardContent className="space-y-6">
             <div className="text-center space-y-6">
               <div 
-                className="text-xl text-white mb-2"
+                className="text-xl text-white mb-2 pixel-font"
                 style={{ 
-                  fontFamily: "'Press Start 2P', cursive",
                   fontSize: '14px'
                 }}
               >
@@ -64,9 +62,8 @@ const StageClearScreen = ({ score, onContinue }: StageClearScreenProps) => {
               </div>
               
               <div 
-                className="text-3xl text-yellow-300 mb-6"
+                className="text-3xl text-yellow-300 mb-6 pixel-font"
                 style={{ 
-                  fontFamily: "'Press Start 2P', cursive",
                   textShadow: "0 0 5px #ffaa00, 0 0 10px #ff8800"
                 }}
               >
@@ -78,8 +75,7 @@ const StageClearScreen = ({ score, onContinue }: StageClearScreenProps) => {
               >
                 <Button 
                   onClick={onContinue}
-                  className="w-full mb-2 bg-green-700 hover:bg-green-600 text-white border border-green-500"
-                  style={{ fontFamily: "'Press Start 2P', cursive" }}
+                  className="w-full mb-2 bg-green-700 hover:bg-green-600 text-white border border-green-500 pixel-font"
                   disabled={!showContinueButton}
                 >
                   CONTINUE
@@ -90,8 +86,8 @@ const StageClearScreen = ({ score, onContinue }: StageClearScreenProps) => {
           
           <CardFooter className="flex justify-center pt-0">
             <p 
-              className="text-[10px] text-gray-400 text-center"
-              style={{ fontFamily: "'Press Start 2P', cursive", fontSize: '8px' }}
+              className="text-[10px] text-gray-400 text-center pixel-font"
+              style={{ fontSize: '8px' }}
             >
               WELL DONE, PILOT. THE NEXT CHALLENGE AWAITS.
             </p>
