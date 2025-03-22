@@ -4,18 +4,24 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Gradius-Style Shooter</title>
-    <!-- ピクセルアートスタイルのフォントをシステムフォントで代替 -->
+    <!-- Google Fontsからピクセルアートフォントを読み込み -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=VT323&family=Press+Start+2P&display=swap" rel="stylesheet">
+    <!-- ローカルにキャッシュされたフォントも読み込み（バックアップ） -->
+    <link rel="stylesheet" href="/fonts/pixel-font.css">
+    
     <style>
-      /* モノスペースフォントを使用してピクセルアート風に見せる */
+      /* ピクセルフォントをロードしてフォールバックを設定 */
       @font-face {
         font-family: 'Pixel';
-        src: local('Courier New'), local('Courier'), local('monospace');
-        font-display: block;
+        src: local('Press Start 2P'), local('VT323'), local('Courier New'), local('Courier'), local('monospace');
+        font-display: swap; /* フォントロード待ちでレンダリングをブロックしない */
       }
       
       /* スタイル適用 */
       .pixel-font {
-        font-family: 'Pixel', monospace;
+        font-family: 'Press Start 2P', 'VT323', 'Pixel', monospace;
         letter-spacing: -0.05em;
         font-weight: bold;
         text-transform: uppercase;
@@ -23,12 +29,13 @@
       
       /* ゲームUI用CSS変数を定義してJSから参照できるようにする */
       :root {
-        --game-font: 'Pixel', monospace;
+        --game-font: 'Press Start 2P', 'VT323', 'Pixel', monospace;
       }
       
       /* ページの読み込み時にちらつきを防止 */
       body {
         visibility: visible !important;
+        font-family: sans-serif; /* ベースフォント設定 */
       }
     </style>
   </head>

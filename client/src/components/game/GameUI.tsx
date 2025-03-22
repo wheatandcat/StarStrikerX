@@ -40,6 +40,7 @@ const GameUI = () => {
         anchorY="middle"
         outlineWidth={0.02}
         outlineColor="#00aaff"
+        font="/fonts/VT323-Regular.ttf"
       >
         {`SCORE: ${formattedScore}`}
       </Text>

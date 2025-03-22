@@ -2,20 +2,22 @@
 @tailwind components;
 @tailwind utilities;
 
-/* ピクセルアート風フォント設定 */
+/* ピクセルアート風フォント設定 - Google Fontsから読み込み済み */
 @font-face {
   font-family: 'Pixel';
-  src: local('Courier New'), 
+  src: local('Press Start 2P'),
+       local('VT323'),
+       local('Courier New'), 
        local('Courier'), 
        local('monospace');
   font-weight: normal;
   font-style: normal;
-  font-display: block;
+  font-display: swap;
 }
 
 /* ピクセルアート風フォントスタイル */
 .pixel-font {
-  font-family: 'Pixel', monospace;
+  font-family: 'Press Start 2P', 'VT323', 'Pixel', monospace;
   letter-spacing: -0.05em;
   font-weight: bold;
   text-transform: uppercase;
