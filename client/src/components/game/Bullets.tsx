@@ -37,7 +37,7 @@ const Bullet = ({ bullet }: { bullet: any }) => {
       {isPlayerBullet ? (
         // プレイヤーの弾 - エネルギーショット
         <group 
-          ref={meshRef}
+          ref={groupRef}
           position={[bullet.position[0], bullet.position[1], 0]}
           rotation={[0, 0, bulletRotation]}
         >
@@ -82,7 +82,7 @@ const Bullet = ({ bullet }: { bullet: any }) => {
       ) : (
         // 敵の弾 - 複数の要素を持つ
         <group
-          ref={meshRef}
+          ref={groupRef}
           position={[bullet.position[0], bullet.position[1], 0]}
         >
           {/* 弾の本体 */}
