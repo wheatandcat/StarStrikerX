@@ -59,6 +59,7 @@ interface GradiusState {
   removeEnemy: (id: string) => void;
   spawnBoss: () => void;
   damageBoss: (amount: number) => void;
+  moveBoss: (x: number, y: number) => void;
   
   // Bullet actions
   removeBullet: (id: string) => void;
@@ -359,6 +360,10 @@ export const useGradius = create<GradiusState>()(
         // 通常のダメージ処理
         set({ bossHealth: newHealth });
       }
+    },
+    
+    moveBoss: (x, y) => {
+      set({ bossPosition: [x, y] });
     },
     
     // Bullet actions

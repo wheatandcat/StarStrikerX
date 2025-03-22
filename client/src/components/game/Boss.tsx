@@ -21,7 +21,7 @@ const Boss = () => {
   const { 
     bossHealth, 
     bossPosition, 
-    movePlayer, 
+    moveBoss, 
     spawnEnemy, 
     bullets,
     playerPosition
@@ -107,7 +107,7 @@ const Boss = () => {
         setIsEntering(false);
       } else {
         // Update boss position in store
-        movePlayer(newX, bossPosition[1]);
+        moveBoss(newX, bossPosition[1]);
         meshRef.current.position.x = newX;
         meshRef.current.position.y = bossPosition[1];
       }
@@ -117,7 +117,7 @@ const Boss = () => {
       const newY = Math.sin(time * 0.5) * BOSS_MOVEMENT_RANGE;
       
       // Update boss position in store
-      movePlayer(newX, newY);
+      moveBoss(newX, newY);
       meshRef.current.position.x = newX;
       meshRef.current.position.y = newY;
       
