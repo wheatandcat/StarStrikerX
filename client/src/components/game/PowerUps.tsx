@@ -39,21 +39,20 @@ const PowerUp = ({ powerUp }: { powerUp: any }) => {
   
   // Update power-up position and add hover/rotation effects
   useFrame(({ clock }) => {
-    if (!groupRef.current || !glowRef.current) return;
+    if (!glowRef.current || !groupRef.current) return;
     
-    // Update position from power-up state
-    groupRef.current.position.x = powerUp.position[0];
-    groupRef.current.position.y = powerUp.position[1];
-    
-    // Update glow position
+    // Update glow position directly
     glowRef.current.position.x = powerUp.position[0];
     glowRef.current.position.y = powerUp.position[1];
     
-    // Hover effect
-    groupRef.current.position.y += Math.sin(clock.getElapsedTime() * 4) * 0.01;
-    
-    // Rotation effect
-    groupRef.current.rotation.z += 0.02;
+    // Add rotation and hover animations to the model
+    if (groupRef.current) {
+      // Slow rotation
+      groupRef.current.rotation.y = clock.getElapsedTime() * 0.5;
+      // Hover effect
+      const hoverOffset = Math.sin(clock.getElapsedTime() * 3) * 0.05;
+      groupRef.current.position.y = powerUp.position[1] + hoverOffset;
+    }
   });
   
   return (
