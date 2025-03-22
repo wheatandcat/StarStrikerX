@@ -1,32 +1,14 @@
-import { useRef, useEffect, useState, Suspense, useMemo } from "react";
+import { useRef, useMemo } from "react";
 import { useFrame } from "@react-three/fiber";
-import { useGLTF, Html } from "@react-three/drei";
 import * as THREE from "three";
-import { GLTF } from "three-stdlib";
 import { useGradius } from "@/lib/stores/useGradius";
 import { PLAYER_SIZE } from "@/lib/constants";
 
-// Preload player ship model
-useGLTF.preload('/models/player.glb');
-
+// レトロな2Dスタイルのプレイヤー
 const Player = () => {
   const { playerPosition, isPlayerInvulnerable, weaponLevel } = useGradius();
   const playerRef = useRef<THREE.Group>(null);
-  const engineGlowRef = useRef<THREE.PointLight>(null);
-  const [modelLoaded, setModelLoaded] = useState(false);
-  
-  // Load player ship model
-  const { scene: playerModel } = useGLTF('/models/player.glb') as GLTF & {
-    scene: THREE.Group
-  };
-  
-  // Update model loaded state
-  useEffect(() => {
-    if (playerModel) {
-      setModelLoaded(true);
-      console.log("Player ship model loaded successfully");
-    }
-  }, [playerModel]);
+  const engineRef = useRef<THREE.Mesh>(null);
   
   // For blinking when invulnerable
   useFrame((state) => {
@@ -44,20 +26,23 @@ const Player = () => {
       playerRef.current.visible = true;
     }
     
-    // Engine glow pulsing
-    if (engineGlowRef.current) {
-      const pulseIntensity = 0.8 + Math.sin(state.clock.getElapsedTime() * 8) * 0.2;
-      engineGlowRef.current.intensity = pulseIntensity;
+    // エンジン排気アニメーション
+    if (engineRef.current) {
+      // エンジン炎のサイズを脈動させる
+      const pulseSize = 0.8 + Math.sin(state.clock.getElapsedTime() * 15) * 0.2;
+      engineRef.current.scale.x = pulseSize;
+      
+      // エンジン色も変化させる
+      const engineMaterial = engineRef.current.material as THREE.MeshBasicMaterial;
+      engineMaterial.color.setHSL(
+        0.05 + Math.sin(state.clock.getElapsedTime() * 10) * 0.05, // わずかに色相変化
+        0.8, // 高い彩度
+        0.6  // 明るさ
+      );
     }
     
-    // Add slight rotation based on movement for visual effect
-    if (playerRef.current && modelLoaded) {
-      // Add a small tilt when moving horizontally and vertically
-      const tiltFactor = 0.1;
-      
-      // Reset rotation to avoid accumulation
-      playerRef.current.rotation.z = Math.sin(state.clock.getElapsedTime() * 0.5) * 0.05;
-    }
+    // 船体の微妙な傾き
+    playerRef.current.rotation.z = Math.sin(state.clock.getElapsedTime() * 2) * 0.05;
   });
   
   // Weapon level indicator color
@@ -75,97 +60,71 @@ const Player = () => {
     <group
       ref={playerRef}
       position={[playerPosition[0], playerPosition[1], 0]}
-      scale={[PLAYER_SIZE * 2.5, PLAYER_SIZE * 2.5, PLAYER_SIZE * 2.5]}
       rotation={[0, 0, 0]}
     >
-      {/* 3D spaceship with enhanced effects */}
-      {modelLoaded ? (
-        <Suspense fallback={
-          <mesh castShadow>
-            <boxGeometry args={[0.6, 0.3, 0.1]} />
-            <meshStandardMaterial color="#FFFFFF" />
-          </mesh>
-        }>
-          {/* Main ship model */}
-          <primitive object={playerModel.clone()} castShadow receiveShadow />
-          
-          {/* Shield effect when invulnerable */}
-          {isPlayerInvulnerable && (
-            <mesh>
-              <sphereGeometry args={[0.7, 16, 16]} />
-              <meshStandardMaterial 
-                color="#4488ff"
-                emissive="#4488ff"
-                emissiveIntensity={0.3}
-                transparent={true}
-                opacity={0.3}
-              />
-            </mesh>
-          )}
-        </Suspense>
-      ) : (
-        <mesh castShadow>
-          <boxGeometry args={[0.6, 0.3, 0.1]} />
-          <meshStandardMaterial color="#FFFFFF" />
+      {/* レトロスタイルの宇宙船 - 単純な2D形状 */}
+      <group scale={[PLAYER_SIZE * 1.5, PLAYER_SIZE * 1.5, 1]}>
+        {/* メインボディ - 三角形 */}
+        <mesh>
+          <planeGeometry args={[1, 0.5]} />
+          <meshBasicMaterial color="#4477FF" />
+        </mesh>
+        
+        {/* コックピット部分 - 小さな丸 */}
+        <mesh position={[0.3, 0, 0.01]}>
+          <planeGeometry args={[0.3, 0.3]} />
+          <meshBasicMaterial color="#8899FF" />
+        </mesh>
+        
+        {/* ウィング - 上 */}
+        <mesh position={[-0.2, 0.3, 0]}>
+          <planeGeometry args={[0.4, 0.2]} />
+          <meshBasicMaterial color="#2244AA" />
+        </mesh>
+        
+        {/* ウィング - 下 */}
+        <mesh position={[-0.2, -0.3, 0]}>
+          <planeGeometry args={[0.4, 0.2]} />
+          <meshBasicMaterial color="#2244AA" />
+        </mesh>
+        
+        {/* エンジン排気 - アニメーション付き */}
+        <mesh ref={engineRef} position={[-0.6, 0, 0]}>
+          <planeGeometry args={[0.4, 0.3]} />
+          <meshBasicMaterial 
+            color="#FF6600" 
+            transparent={true}
+            opacity={0.8}
+          />
+        </mesh>
+      </group>
+      
+      {/* 武器レベルインジケーター - レトロスタイル */}
+      <group position={[0, 0.6, 0.01]}>
+        {/* 基本の枠 */}
+        <mesh>
+          <planeGeometry args={[0.6, 0.15]} />
+          <meshBasicMaterial color="#333333" />
+        </mesh>
+        
+        {/* 武器レベル表示 - 現在のレベルに応じて拡大 */}
+        <mesh position={[0, 0, 0.01]} scale={[(weaponLevel + 1) / 4, 1, 1]}>
+          <planeGeometry args={[0.55, 0.1]} />
+          <meshBasicMaterial color={weaponLevelColor} />
+        </mesh>
+      </group>
+      
+      {/* 無敵時のシールドエフェクト - 単純な円で表現 */}
+      {isPlayerInvulnerable && (
+        <mesh>
+          <circleGeometry args={[PLAYER_SIZE * 1.2, 16]} />
+          <meshBasicMaterial 
+            color="#4488ff"
+            transparent={true}
+            opacity={0.3}
+          />
         </mesh>
       )}
-      
-      {/* Engine glow effects - multiple lights for more dynamic look */}
-      <pointLight 
-        ref={engineGlowRef}
-        position={[-0.5, 0, 0]} 
-        intensity={1.5} 
-        distance={3} 
-        color="#00FFFF"
-      />
-      
-      {/* Secondary engine glows */}
-      <pointLight 
-        position={[-0.5, 0.1, 0]} 
-        intensity={0.8} 
-        distance={1.5} 
-        color="#80FFFF"
-      />
-      
-      <pointLight 
-        position={[-0.5, -0.1, 0]} 
-        intensity={0.8} 
-        distance={1.5} 
-        color="#80FFFF"
-      />
-      
-      {/* Weapon level indicator with improved visual style */}
-      <group position={[0, 0.5, 0]}>
-        {/* Base indicator */}
-        <mesh>
-          <boxGeometry args={[0.4, 0.12, 0.05]} />
-          <meshStandardMaterial 
-            color="#333333" 
-            metalness={0.8}
-            roughness={0.2}
-          />
-        </mesh>
-        
-        {/* Active level indicator */}
-        <mesh position={[0, 0, 0.05]}>
-          <boxGeometry args={[0.36, 0.08, 0.05]} />
-          <meshStandardMaterial 
-            color={weaponLevelColor}
-            emissive={weaponLevelColor}
-            emissiveIntensity={0.8}
-            metalness={0.9}
-            roughness={0.1}
-          />
-        </mesh>
-        
-        {/* Small glow for the indicator */}
-        <pointLight 
-          position={[0, 0, 0.2]} 
-          intensity={0.4} 
-          distance={0.5} 
-          color={weaponLevelColor}
-        />
-      </group>
     </group>
   );
 };

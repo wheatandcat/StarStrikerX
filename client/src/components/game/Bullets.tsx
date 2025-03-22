@@ -4,90 +4,55 @@ import * as THREE from "three";
 import { useGradius } from "@/lib/stores/useGradius";
 import { BULLET_SIZE } from "@/lib/constants";
 
-// Create bullet mesh based on whether it's a player or enemy bullet
+// Create bullet mesh based on whether it's a player or enemy bullet - レトロスタイル
 const Bullet = ({ bullet }: { bullet: any }) => {
   const meshRef = useRef<THREE.Mesh>(null);
-  const trailRef = useRef<THREE.PointLight>(null);
   
   // Different styles for player and enemy bullets
   const isPlayerBullet = bullet.isPlayerBullet;
-  const bulletColor = isPlayerBullet ? 0x00ffff : 0xff4400;
+  const bulletColor = isPlayerBullet ? "#00FFFF" : "#FF4400";
   const bulletSize = BULLET_SIZE * (isPlayerBullet ? 1 : 1.2);
   
   // Update bullet position
   useFrame(() => {
-    if (!meshRef.current || !trailRef.current) return;
+    if (!meshRef.current) return;
     
     // Update position from bullet state
     meshRef.current.position.x = bullet.position[0];
     meshRef.current.position.y = bullet.position[1];
     
-    // Update trail position
-    trailRef.current.position.x = bullet.position[0] - bullet.direction[0] * 0.2;
-    trailRef.current.position.y = bullet.position[1] - bullet.direction[1] * 0.2;
-    
     // Rotation effect for enemy bullets
     if (!isPlayerBullet) {
-      meshRef.current.rotation.z += 0.1;
+      meshRef.current.rotation.z += 0.2;
     }
   });
   
+  // 弾の回転角度を計算（弾の方向に合わせる）
+  const direction = bullet.direction;
+  const bulletRotation = Math.atan2(direction[1], direction[0]);
+  
   return (
     <group>
-      {/* Player bullets - sleek, energy-based appearance */}
+      {/* プレイヤーの弾 - シンプルな矩形 */}
       {isPlayerBullet ? (
-        <>
-          <mesh 
-            ref={meshRef} 
-            position={[bullet.position[0], bullet.position[1], 0]}
-            rotation={[0, 0, Math.PI / 2]} // Rotate capsule to point horizontally
-          >
-            <capsuleGeometry args={[bulletSize / 3, bulletSize, 8, 16]} />
-            <meshStandardMaterial 
-              color={bulletColor} 
-              emissive={bulletColor} 
-              emissiveIntensity={1.5}
-              metalness={0.9}
-              roughness={0.1}
-              transparent={true}
-              opacity={0.9}
-            />
-          </mesh>
-          
-          {/* Core glow for player bullets */}
-          <mesh position={[bullet.position[0], bullet.position[1], 0]} scale={[0.6, 0.6, 0.6]}>
-            <sphereGeometry args={[bulletSize / 2.5, 8, 8]} />
-            <meshBasicMaterial color={0xffffff} transparent={true} opacity={0.7} />
-          </mesh>
-        </>
+        <mesh 
+          ref={meshRef} 
+          position={[bullet.position[0], bullet.position[1], 0]}
+          rotation={[0, 0, bulletRotation]}
+        >
+          <planeGeometry args={[bulletSize * 0.8, bulletSize * 0.4]} />
+          <meshBasicMaterial color={bulletColor} />
+        </mesh>
       ) : (
-        /* Enemy bullets - more chaotic, threatening appearance */
-        <mesh ref={meshRef} position={[bullet.position[0], bullet.position[1], 0]}>
-          <dodecahedronGeometry args={[bulletSize / 2, 1]} />
-          <meshStandardMaterial 
-            color={bulletColor} 
-            emissive={bulletColor} 
-            emissiveIntensity={1.5}
-            metalness={0.9}
-            roughness={0.1}
-            transparent={true}
-            opacity={0.9}
-          />
+        /* 敵の弾 - 小さな円形 */
+        <mesh 
+          ref={meshRef} 
+          position={[bullet.position[0], bullet.position[1], 0]}
+        >
+          <circleGeometry args={[bulletSize * 0.3, 8]} />
+          <meshBasicMaterial color={bulletColor} />
         </mesh>
       )}
-      
-      {/* Bullet trail light - enhanced */}
-      <pointLight 
-        ref={trailRef}
-        position={[
-          bullet.position[0] - bullet.direction[0] * 0.2,
-          bullet.position[1] - bullet.direction[1] * 0.2,
-          0
-        ]}
-        distance={isPlayerBullet ? 2 : 1.2}
-        intensity={isPlayerBullet ? 0.9 : 0.6}
-        color={isPlayerBullet ? 0x00ffff : 0xff4400}
-      />
     </group>
   );
 };
