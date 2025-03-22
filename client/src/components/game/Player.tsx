@@ -1,8 +1,10 @@
-import { useRef, useMemo } from "react";
+import { useRef, useMemo, useEffect } from "react";
 import { useFrame } from "@react-three/fiber";
+import { useKeyboardControls } from "@react-three/drei";
 import * as THREE from "three";
 import { useGradius } from "@/lib/stores/useGradius";
 import { PLAYER_SIZE } from "@/lib/constants";
+import { Controls } from "@/lib/types";
 
 // レトロな2Dスタイルのプレイヤー
 const Player = () => {

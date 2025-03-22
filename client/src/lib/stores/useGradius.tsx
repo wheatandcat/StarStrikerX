@@ -99,6 +99,19 @@ export const useGradius = create<GradiusState>()(
     bossHealth: 100,
     bossPosition: [9, 0],
     
+    // ポーズ機能も初期ステートで定義
+    togglePause: () => {
+      const { gamePhase } = get();
+      // ゲームプレイ中のみポーズ可能
+      if (gamePhase === "playing") {
+        set({ gamePhase: "paused" });
+        console.log("Game paused");
+      } else if (gamePhase === "paused") {
+        set({ gamePhase: "playing" });
+        console.log("Game resumed");
+      }
+    },
+    
     // Actions
     startGame: () => {
       set({
@@ -161,18 +174,6 @@ export const useGradius = create<GradiusState>()(
     stageClear: () => {
       set({ gamePhase: "stageClear" });
       console.log("Stage clear");
-    },
-    
-    togglePause: () => {
-      const { gamePhase } = get();
-      // ゲームプレイ中のみポーズ可能
-      if (gamePhase === "playing") {
-        set({ gamePhase: "paused" });
-        console.log("Game paused");
-      } else if (gamePhase === "paused") {
-        set({ gamePhase: "playing" });
-        console.log("Game resumed");
-      }
     },
     
     // Player actions

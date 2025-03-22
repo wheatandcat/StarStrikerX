@@ -80,6 +80,8 @@ const GameUI = () => {
     stageNumber, 
     bossActive, 
     bossHealth,
+    gamePhase,
+    togglePause
   } = useGradius();
   
   const { size } = useThree();
@@ -275,6 +277,71 @@ const GameUI = () => {
       
       {/* Boss HP bar - フルスクリーン用HTML */}
       <Html fullscreen>
+        {/* ポーズ画面 */}
+        {gamePhase === "paused" && (
+          <div style={{
+            position: 'absolute' as 'absolute',
+            top: 0,
+            left: 0,
+            width: '100%',
+            height: '100%',
+            backgroundColor: 'rgba(0, 0, 0, 0.7)',
+            display: 'flex',
+            flexDirection: 'column' as 'column',
+            justifyContent: 'center',
+            alignItems: 'center',
+            color: '#FFFFFF',
+            fontFamily: 'Arial, sans-serif',
+            zIndex: 30
+          }}>
+            <div style={{
+              fontSize: '3rem',
+              fontWeight: 'bold',
+              marginBottom: '2rem',
+              textShadow: '0 0 10px #00AAFF, 0 0 20px #00AAFF',
+              animation: 'pulse 1.5s infinite alternate'
+            }}>
+              PAUSED
+            </div>
+            
+            <div style={{
+              fontSize: '1.2rem',
+              marginBottom: '1rem',
+              color: '#AAAAAA'
+            }}>
+              Press ESC or P to resume
+            </div>
+            
+            <div style={{
+              marginTop: '2rem',
+              display: 'flex',
+              flexDirection: 'column' as 'column',
+              alignItems: 'center'
+            }}>
+              <div style={{
+                fontSize: '1rem',
+                marginBottom: '0.5rem',
+                color: '#FFFFFF'
+              }}>
+                SCORE: {formattedScore}
+              </div>
+              <div style={{
+                fontSize: '1rem',
+                marginBottom: '0.5rem',
+                color: '#FFFFFF'
+              }}>
+                LIVES: {lives}
+              </div>
+              <div style={{
+                fontSize: '1rem',
+                color: '#FFFFFF'
+              }}>
+                STAGE: {stageNumber}
+              </div>
+            </div>
+          </div>
+        )}
+        
         {/* ボス体力表示 */}
         {bossActive && (
           <div style={bossHpStyles.container}>
