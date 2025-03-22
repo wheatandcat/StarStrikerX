@@ -133,13 +133,27 @@ const Background = () => {
       {/* ダライアス風のグラデーション背景 */}
       <mesh position={[0, 0, -1]}>
         <planeGeometry args={[40, 20]} />
-        <meshBasicMaterial>
-          <gradientTexture
-            attach="map"
-            stops={[0, 0.45, 0.55, 1]}
-            colors={['#020024', '#090979', '#0A1949', '#020024']}
-          />
-        </meshBasicMaterial>
+        <meshBasicMaterial color="#020630" />
+      </mesh>
+      
+      {/* 上部のグラデーション効果 */}
+      <mesh position={[0, 5, -0.99]}>
+        <planeGeometry args={[40, 10]} />
+        <meshBasicMaterial 
+          color="#000428" 
+          transparent={true}
+          opacity={0.7}
+        />
+      </mesh>
+      
+      {/* 下部のグラデーション効果 */}
+      <mesh position={[0, -5, -0.99]}>
+        <planeGeometry args={[40, 10]} />
+        <meshBasicMaterial 
+          color="#000428" 
+          transparent={true}
+          opacity={0.7}
+        />
       </mesh>
       
       {/* R-Type風の星雲/雲 */}
