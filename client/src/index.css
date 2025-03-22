@@ -2,6 +2,15 @@
 @tailwind components;
 @tailwind utilities;
 
+/* プロジェクトにフォントを定義 */
+@font-face {
+  font-family: 'Press Start 2P';
+  src: url('/fonts/pressstart2p.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
 @layer base {
   * {
     @apply border-border;
