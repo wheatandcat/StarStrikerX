@@ -1,6 +1,6 @@
 import { useRef, useMemo, useEffect } from "react";
 import { useFrame } from "@react-three/fiber";
-import { useTexture, Text } from "@react-three/drei";
+import { Html } from "@react-three/drei";
 import * as THREE from "three";
 import { useGradius } from "@/lib/stores/useGradius";
 import { PLAYER_SIZE } from "@/lib/constants";
@@ -123,16 +123,17 @@ const Player = () => {
           <boxGeometry args={[0.3, 0.1, 0.05]} />
           <meshBasicMaterial color="#333333" />
         </mesh>
-        <Text
-          position={[0, 0, 0.1]}
-          fontSize={0.15}
-          color={weaponLevelColor}
-          anchorX="center"
-          anchorY="middle"
-          font="monospace"
-        >
-          {`L${weaponLevel + 1}`}
-        </Text>
+        {/* テキストの代わりにHTML要素を使用 */}
+        <Html position={[0, 0, 0.1]} center distanceFactor={10}>
+          <div className="pixel-font" style={{
+            color: weaponLevelColor,
+            fontSize: '14px',
+            fontWeight: 'bold',
+            textShadow: '0 0 3px rgba(0,0,0,0.5)'
+          }}>
+            L{weaponLevel + 1}
+          </div>
+        </Html>
       </group>
     </group>
   );
