@@ -172,8 +172,14 @@ const Level: React.FC<LevelProps> = ({ viewport: canvasViewport }) => {
       lastShootTimeRef.current = currentTime;
     }
     
+    // Copy the bullets array to avoid modification issues during iteration
+    const bulletsCopy = [...bullets];
+    const bulletsToRemove: string[] = [];
+    const enemiesWithDamage: { id: string, newHealth: number }[] = [];
+    
     // Update bullets
-    bullets.forEach(bullet => {
+    for (let i = 0; i < bulletsCopy.length; i++) {
+      const bullet = bulletsCopy[i];
       const [bx, by] = bullet.position;
       const [dx, dy] = bullet.direction;
       const speed = bullet.isPlayerBullet ? 0.3 : 0.15;
@@ -181,10 +187,10 @@ const Level: React.FC<LevelProps> = ({ viewport: canvasViewport }) => {
       const newX = bx + dx * speed;
       const newY = by + dy * speed;
       
-      // Remove out-of-bounds bullets
+      // Flag out-of-bounds bullets for removal
       if (isOutOfBounds([newX, newY])) {
-        removeBullet(bullet.id);
-        return;
+        bulletsToRemove.push(bullet.id);
+        continue;
       }
       
       // Update bullet position using a safer approach
@@ -195,16 +201,22 @@ const Level: React.FC<LevelProps> = ({ viewport: canvasViewport }) => {
       // Check bullet collisions
       if (bullet.isPlayerBullet) {
         // Player bullets hit enemies
-        enemies.forEach(enemy => {
+        let bulletHit = false;
+        
+        for (let j = 0; j < enemies.length; j++) {
+          const enemy = enemies[j];
           const enemyProps = getEnemyProperties(enemy.type as EnemyType);
+          
           if (checkBulletEnemyCollision(
             [newX, newY],
             enemy.position,
             enemyProps.collisionRadius
           )) {
-            removeBullet(bullet.id);
+            // Flag bullet for removal
+            bulletsToRemove.push(bullet.id);
+            bulletHit = true;
             
-            // Damage enemy or remove if health depleted
+            // Calculate new health and update
             const newHealth = enemy.health - 1;
             
             if (newHealth <= 0) {
@@ -215,7 +227,10 @@ const Level: React.FC<LevelProps> = ({ viewport: canvasViewport }) => {
                 
                 console.log(`Defeating enemy ${enemyId} at position [${enemyPosition[0]}, ${enemyPosition[1]}]`);
                 
-                // Remove the enemy first, then update score and play sound
+                // Track defeated enemies for boss spawn before removing the enemy
+                defeatedEnemiesRef.current += 1;
+                
+                // Flag enemy for removal, increment score
                 removeEnemy(enemyId);
                 incrementScore(enemyProps.scoreValue);
                 playHit();
@@ -223,20 +238,28 @@ const Level: React.FC<LevelProps> = ({ viewport: canvasViewport }) => {
                 // Use the stored position for power-up spawning
                 if (shouldDropPowerUp()) {
                   console.log(`Spawning power-up at [${enemyPosition[0]}, ${enemyPosition[1]}]`);
-                  spawnPowerUp(enemyPosition);
+                  // Use a delay to ensure the enemy is fully removed first
+                  setTimeout(() => {
+                    if (useGradius.getState().gamePhase === "playing") {
+                      spawnPowerUp(enemyPosition);
+                    }
+                  }, 50);
                 }
-                
-                // Track defeated enemies for boss spawn
-                defeatedEnemiesRef.current += 1;
               } catch (error) {
                 console.error("Error in enemy defeat logic:", error);
               }
             } else {
-              // Only update health if enemy is still alive
-              enemy.health = newHealth;
+              // Store health update for later
+              enemiesWithDamage.push({ id: enemy.id, newHealth });
             }
+            
+            // Break since this bullet hit something
+            break;
           }
-        });
+        }
+        
+        // If bullet already hit something, skip the boss check
+        if (bulletHit) continue;
         
         // Player bullets hit boss
         if (bossActive) {
@@ -246,7 +269,7 @@ const Level: React.FC<LevelProps> = ({ viewport: canvasViewport }) => {
             useGradius.getState().bossPosition,
             bossProps.collisionRadius
           )) {
-            removeBullet(bullet.id);
+            bulletsToRemove.push(bullet.id);
             damageBoss(1);
             playHit();
           }
@@ -254,15 +277,35 @@ const Level: React.FC<LevelProps> = ({ viewport: canvasViewport }) => {
       } else {
         // Enemy bullets hit player
         if (!isPlayerInvulnerable && checkEnemyBulletPlayerCollision([newX, newY], playerPosition)) {
-          removeBullet(bullet.id);
+          bulletsToRemove.push(bullet.id);
           takeDamage();
           playHit();
         }
       }
-    });
+    }
     
-    // Update enemies
-    enemies.forEach(enemy => {
+    // Apply all bullet removals in one batch at the end
+    if (bulletsToRemove.length > 0) {
+      for (const bulletId of bulletsToRemove) {
+        removeBullet(bulletId);
+      }
+    }
+    
+    // Apply enemy health updates
+    for (const { id, newHealth } of enemiesWithDamage) {
+      // Find the enemy in the current state
+      const enemy = enemies.find(e => e.id === id);
+      if (enemy) {
+        enemy.health = newHealth;
+      }
+    }
+    
+    // Update enemies - use a copy to avoid modification issues during iteration
+    const enemiesCopy = [...enemies];
+    const enemiesToRemove: string[] = [];
+    
+    for (let i = 0; i < enemiesCopy.length; i++) {
+      const enemy = enemiesCopy[i];
       const [ex, ey] = enemy.position;
       
       // Basic movement: move towards the left side
@@ -279,15 +322,10 @@ const Level: React.FC<LevelProps> = ({ viewport: canvasViewport }) => {
         newY = ey + (playerY - ey) * 0.005;
       }
       
-      // Remove enemies that move off-screen
+      // Flag enemies that move off-screen for removal
       if (newX < -12) {
-        // Safely remove enemy that's offscreen
-        try {
-          removeEnemy(enemy.id);
-        } catch (error) {
-          console.error("Failed to remove enemy:", error);
-        }
-        return;
+        enemiesToRemove.push(enemy.id);
+        continue;
       }
       
       // Update enemy position using a safer approach
@@ -306,27 +344,42 @@ const Level: React.FC<LevelProps> = ({ viewport: canvasViewport }) => {
           // Take damage first
           takeDamage();
           
-          // Then remove enemy
-          removeEnemy(enemy.id);
+          // Flag enemy for removal
+          enemiesToRemove.push(enemy.id);
           playHit();
           
-          // Return early to prevent further processing of this enemy
-          return;
+          // Continue to the next enemy
+          continue;
         }
       }
-    });
+    }
     
-    // Update power-ups
-    powerUps.forEach(powerUp => {
+    // Apply all enemy removals in one batch at the end
+    if (enemiesToRemove.length > 0) {
+      for (const enemyId of enemiesToRemove) {
+        try {
+          removeEnemy(enemyId);
+        } catch (error) {
+          console.error(`Failed to remove enemy ${enemyId}:`, error);
+        }
+      }
+    }
+    
+    // Update power-ups - use a copy to avoid modification issues
+    const powerUpsCopy = [...powerUps];
+    const powerUpsToRemove: string[] = [];
+    
+    for (let i = 0; i < powerUpsCopy.length; i++) {
+      const powerUp = powerUpsCopy[i];
       const [px, py] = powerUp.position;
       
       // PowerUps drift to the left
       const newX = px - 0.05;
       
-      // Remove power-ups that move off-screen
+      // Flag power-ups that move off-screen for removal
       if (newX < -12) {
-        removePowerUp(powerUp.id);
-        return;
+        powerUpsToRemove.push(powerUp.id);
+        continue;
       }
       
       // Update power-up position using a safer approach
@@ -336,34 +389,67 @@ const Level: React.FC<LevelProps> = ({ viewport: canvasViewport }) => {
       
       // Check player collision with power-up
       if (checkPlayerPowerUpCollision(playerPosition, [newX, py])) {
+        // Collect power-up and flag for removal
         collectPowerUp(powerUp.type);
-        removePowerUp(powerUp.id);
+        powerUpsToRemove.push(powerUp.id);
         playSuccess();
       }
-    });
+    }
+    
+    // Apply all power-up removals in one batch
+    if (powerUpsToRemove.length > 0) {
+      for (const powerUpId of powerUpsToRemove) {
+        try {
+          removePowerUp(powerUpId);
+        } catch (error) {
+          console.error(`Failed to remove power-up ${powerUpId}:`, error);
+        }
+      }
+    }
     
     // Check if boss should spawn based on score or enemy count
     if (gamePhase === "playing" && !bossActive && 
         (useGradius.getState().score >= BOSS_SPAWN_SCORE || 
          defeatedEnemiesRef.current >= ENEMIES_TO_SPAWN_BOSS)) {
-      // Create a temporary array to avoid concurrent modifications
-      const enemiesToRemove = [...enemies];
       
-      // Clear existing enemies before boss
-      enemiesToRemove.forEach(enemy => {
-        try {
-          removeEnemy(enemy.id);
-        } catch (error) {
-          console.error("Failed to remove enemy before boss:", error);
-        }
-      });
+      console.log("Preparing to spawn boss!");
       
-      // Spawn boss after a small delay to ensure all enemies are removed
+      // Clear existing enemies before boss in a separate closure
       setTimeout(() => {
         if (useGradius.getState().gamePhase === "playing") {
-          spawnBoss();
+          // Get the current enemies from the state
+          const currentEnemies = useGradius.getState().enemies;
+          
+          // For safety, process in small batches with delays
+          const processBatch = (start: number, batchSize: number) => {
+            const end = Math.min(start + batchSize, currentEnemies.length);
+            
+            for (let i = start; i < end; i++) {
+              try {
+                removeEnemy(currentEnemies[i].id);
+              } catch (error) {
+                console.error(`Failed to remove enemy before boss (batch ${start}-${end}):`, error);
+              }
+            }
+            
+            // Process next batch if needed
+            if (end < currentEnemies.length) {
+              setTimeout(() => processBatch(end, batchSize), 10);
+            } else {
+              // All enemies removed, spawn boss
+              console.log("All enemies cleared, spawning boss");
+              setTimeout(() => {
+                if (useGradius.getState().gamePhase === "playing") {
+                  spawnBoss();
+                }
+              }, 100);
+            }
+          };
+          
+          // Start processing in batches of 3
+          processBatch(0, 3);
         }
-      }, 100);
+      }, 50);
     }
   });
   
