@@ -52,3 +52,9 @@ canvas {
   font-family: monospace, 'Courier New', Courier, sans-serif !important;
   visibility: visible !important;
 }
+
+/* ボス登場アナウンスのパルスアニメーション */
+@keyframes pulse {
+  from { transform: translate(-50%, -50%) scale(1); }
+  to { transform: translate(-50%, -50%) scale(1.1); }
+}

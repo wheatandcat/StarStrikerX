@@ -338,13 +338,6 @@ const GameUI = () => {
         )}
       </Html>
       
-      <style>{`
-        @keyframes pulse {
-          from { transform: translate(-50%, -50%) scale(1); }
-          to { transform: translate(-50%, -50%) scale(1.1); }
-        }
-      `}</style>
-      
       {/* Controls help at bottom */}
       <Html position={[0, -5.3, 0]} transform center className="game-ui-element">
         <div style={{ 
