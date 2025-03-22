@@ -1,160 +1,89 @@
-import { useRef, useState, useEffect, Suspense } from "react";
+import { useRef } from "react";
 import { useFrame } from "@react-three/fiber";
-import { useGLTF, Html } from "@react-three/drei";
 import * as THREE from "three";
-import { GLTF } from "three-stdlib";
+import { Html } from "@react-three/drei";
 import { useGradius } from "@/lib/stores/useGradius";
 import { PowerUpType } from "@/lib/types";
 import { POWERUP_SIZE } from "@/lib/constants";
 
-// Preload the powerup model
-useGLTF.preload('/models/powerup.glb');
-
+// レトロスタイルのパワーアップ
 const PowerUp = ({ powerUp }: { powerUp: any }) => {
   const groupRef = useRef<THREE.Group>(null);
-  const glowRef = useRef<THREE.PointLight>(null);
-  const [modelLoaded, setModelLoaded] = useState(false);
-  
-  // Load power-up model
-  const { scene: powerupModel } = useGLTF('/models/powerup.glb') as GLTF & {
-    scene: THREE.Group
-  };
-  
-  // Update model loaded state
-  useEffect(() => {
-    if (powerupModel) {
-      setModelLoaded(true);
-      console.log("Power-up model loaded successfully");
-    }
-  }, [powerupModel]);
+  const meshRef = useRef<THREE.Mesh>(null);
   
   // Different styles for different power-up types
-  let color = 0xffff00; // Default yellow
+  let color = "#FFFF00"; // Default yellow
   let label = "W";
   
   if (powerUp.type === PowerUpType.WeaponUpgrade) {
-    color = 0x00ffaa;
+    color = "#00FFAA";
     label = "W";
   }
   
   // Update power-up position and add hover/rotation effects
   useFrame(({ clock }) => {
-    if (!glowRef.current || !groupRef.current) return;
+    if (!groupRef.current || !meshRef.current) return;
     
     const time = clock.getElapsedTime();
     
-    // Update glow position directly
-    glowRef.current.position.x = powerUp.position[0];
-    glowRef.current.position.y = powerUp.position[1];
+    // 位置のアップデート
+    groupRef.current.position.x = powerUp.position[0];
+    groupRef.current.position.y = powerUp.position[1];
     
-    // Add pulsing effect to the glow
-    const pulseIntensity = 1.8 + Math.sin(time * 4) * 0.4;
-    if (glowRef.current) {
-      glowRef.current.intensity = pulseIntensity;
-    }
+    // 浮遊効果を追加
+    const hoverOffset = Math.sin(time * 3) * 0.05;
+    groupRef.current.position.y = powerUp.position[1] + hoverOffset;
     
-    // Add rotation and hover animations to the model
-    if (groupRef.current) {
-      // Slow rotation
-      groupRef.current.rotation.y = time * 0.5;
-      // Additional subtle rotation in other axes
-      groupRef.current.rotation.x = Math.sin(time * 0.2) * 0.1;
-      
-      // Hover effect
-      const hoverOffset = Math.sin(time * 3) * 0.05;
-      groupRef.current.position.y = powerUp.position[1] + hoverOffset;
-      
-      // Subtle scale pulsing
-      const scalePulse = 1.0 + Math.sin(time * 2) * 0.03;
-      groupRef.current.scale.set(
-        POWERUP_SIZE * 2.5 * scalePulse,
-        POWERUP_SIZE * 2.5 * scalePulse,
-        POWERUP_SIZE * 2.5 * scalePulse
-      );
+    // 回転エフェクト
+    groupRef.current.rotation.z = time * 2;
+    
+    // サイズの脈動
+    const scalePulse = 1.0 + Math.sin(time * 4) * 0.1;
+    groupRef.current.scale.set(scalePulse, scalePulse, 1);
+    
+    // パワーアップの色も脈動
+    if (meshRef.current) {
+      const material = meshRef.current.material as THREE.MeshBasicMaterial;
+      const hue = (Math.sin(time * 2) * 0.1) + 0.5; // 色相を少し変化させる
+      material.color.setHSL(hue, 1, 0.5);
     }
   });
   
   return (
-    <group>
-      <group 
-        ref={groupRef} 
-        position={[powerUp.position[0], powerUp.position[1], 0]}
-        scale={[POWERUP_SIZE * 2.5, POWERUP_SIZE * 2.5, POWERUP_SIZE * 2.5]}
-        rotation={[0, 0, 0]}
+    <group 
+      ref={groupRef} 
+      position={[powerUp.position[0], powerUp.position[1], 0]}
+      scale={[1, 1, 1]}
+    >
+      {/* パワーアップの四角形 */}
+      <mesh ref={meshRef}>
+        <planeGeometry args={[POWERUP_SIZE * 0.8, POWERUP_SIZE * 0.8]} />
+        <meshBasicMaterial color={color} />
+      </mesh>
+      
+      {/* 内側のシンボル */}
+      <mesh position={[0, 0, 0.01]}>
+        <planeGeometry args={[POWERUP_SIZE * 0.4, POWERUP_SIZE * 0.4]} />
+        <meshBasicMaterial color="#FFFFFF" />
+      </mesh>
+      
+      {/* テキストラベル */}
+      <Html
+        position={[0, 0, 0.1]}
+        transform
+        center
+        scale={0.5}
       >
-        {/* 3D model power-up with enhanced effects */}
-        {modelLoaded ? (
-          <Suspense fallback={
-            <mesh castShadow>
-              <boxGeometry args={[0.5, 0.5, 0.25]} />
-              <meshStandardMaterial 
-                color={color} 
-                emissive={color} 
-                emissiveIntensity={0.8}
-              />
-            </mesh>
-          }>
-            {/* Main 3D model */}
-            <primitive object={powerupModel.clone()} castShadow receiveShadow />
-            
-            {/* Energy field effect around the power-up */}
-            <mesh scale={[1.1, 1.1, 1.1]}>
-              <sphereGeometry args={[0.4, 16, 16]} />
-              <meshStandardMaterial 
-                color={color} 
-                emissive={color} 
-                emissiveIntensity={0.6}
-                transparent={true}
-                opacity={0.3}
-              />
-            </mesh>
-          </Suspense>
-        ) : (
-          <mesh castShadow>
-            <boxGeometry args={[0.5, 0.5, 0.25]} />
-            <meshStandardMaterial 
-              color={color} 
-              emissive={color} 
-              emissiveIntensity={0.8}
-            />
-          </mesh>
-        )}
-        
-        {/* Power-up type label with improved visibility */}
-        <Html
-          position={[0, 0, 0.5]}
-          transform
-          center
-        >
-          <div style={{ 
-            fontFamily: 'Arial, sans-serif',
-            color: 'white', 
-            fontSize: '8px',
-            fontWeight: 'bold',
-            textAlign: 'center',
-            textShadow: '0 0 2px #000000, 0 0 2px #000000'
-          }}>
-            {label}
-          </div>
-        </Html>
-      </group>
-      
-      {/* Enhanced glow effect with pulsing */}
-      <pointLight 
-        ref={glowRef}
-        position={[powerUp.position[0], powerUp.position[1], 0]} 
-        color={color} 
-        intensity={1.8} 
-        distance={4}
-      />
-      
-      {/* Secondary subtle light for added dimension */}
-      <pointLight 
-        position={[powerUp.position[0], powerUp.position[1], 0.5]} 
-        color={0xffffff} 
-        intensity={0.5} 
-        distance={1}
-      />
+        <div style={{ 
+          fontFamily: 'Arial, sans-serif',
+          color: '#000000', 
+          fontSize: '24px',
+          fontWeight: 'bold',
+          textAlign: 'center'
+        }}>
+          {label}
+        </div>
+      </Html>
     </group>
   );
 };
