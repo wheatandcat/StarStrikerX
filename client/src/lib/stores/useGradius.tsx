@@ -318,12 +318,20 @@ export const useGradius = create<GradiusState>()(
       const newHealth = bossHealth - amount;
       
       if (newHealth <= 0) {
-        set({ 
-          bossActive: false,
-          bossHealth: 0
-        });
+        // First increment score and then deactivate boss
         get().incrementScore(1000);
-        get().stageClear();
+        
+        // Use setTimeout to give a slight delay before clearing the stage
+        // This helps prevent rendering issues
+        setTimeout(() => {
+          if (get().gamePhase === "playing") {
+            set({ 
+              bossActive: false,
+              bossHealth: 0
+            });
+            get().stageClear();
+          }
+        }, 100);
       } else {
         set({ bossHealth: newHealth });
       }

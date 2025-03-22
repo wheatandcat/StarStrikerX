@@ -208,21 +208,29 @@ const Level: React.FC<LevelProps> = ({ viewport: canvasViewport }) => {
             const newHealth = enemy.health - 1;
             
             if (newHealth <= 0) {
-              // Store the position before removing the enemy
-              const enemyPosition: [number, number] = [...enemy.position];
-              
-              // Remove the enemy first
-              removeEnemy(enemy.id);
-              incrementScore(enemyProps.scoreValue);
-              playHit();
-              
-              // Use the stored position for power-up spawning
-              if (shouldDropPowerUp()) {
-                spawnPowerUp(enemyPosition);
+              try {
+                // Store the position before removing the enemy
+                const enemyPosition: [number, number] = [...enemy.position];
+                const enemyId = enemy.id;
+                
+                console.log(`Defeating enemy ${enemyId} at position [${enemyPosition[0]}, ${enemyPosition[1]}]`);
+                
+                // Remove the enemy first, then update score and play sound
+                removeEnemy(enemyId);
+                incrementScore(enemyProps.scoreValue);
+                playHit();
+                
+                // Use the stored position for power-up spawning
+                if (shouldDropPowerUp()) {
+                  console.log(`Spawning power-up at [${enemyPosition[0]}, ${enemyPosition[1]}]`);
+                  spawnPowerUp(enemyPosition);
+                }
+                
+                // Track defeated enemies for boss spawn
+                defeatedEnemiesRef.current += 1;
+              } catch (error) {
+                console.error("Error in enemy defeat logic:", error);
               }
-              
-              // Track defeated enemies for boss spawn
-              defeatedEnemiesRef.current += 1;
             } else {
               // Only update health if enemy is still alive
               enemy.health = newHealth;
@@ -273,7 +281,12 @@ const Level: React.FC<LevelProps> = ({ viewport: canvasViewport }) => {
       
       // Remove enemies that move off-screen
       if (newX < -12) {
-        removeEnemy(enemy.id);
+        // Safely remove enemy that's offscreen
+        try {
+          removeEnemy(enemy.id);
+        } catch (error) {
+          console.error("Failed to remove enemy:", error);
+        }
         return;
       }
       
@@ -290,9 +303,15 @@ const Level: React.FC<LevelProps> = ({ viewport: canvasViewport }) => {
           [newX, newY],
           enemyProps.collisionRadius
         )) {
+          // Take damage first
           takeDamage();
+          
+          // Then remove enemy
           removeEnemy(enemy.id);
           playHit();
+          
+          // Return early to prevent further processing of this enemy
+          return;
         }
       }
     });
@@ -324,12 +343,27 @@ const Level: React.FC<LevelProps> = ({ viewport: canvasViewport }) => {
     });
     
     // Check if boss should spawn based on score or enemy count
-    if (!bossActive && 
+    if (gamePhase === "playing" && !bossActive && 
         (useGradius.getState().score >= BOSS_SPAWN_SCORE || 
          defeatedEnemiesRef.current >= ENEMIES_TO_SPAWN_BOSS)) {
+      // Create a temporary array to avoid concurrent modifications
+      const enemiesToRemove = [...enemies];
+      
       // Clear existing enemies before boss
-      enemies.forEach(enemy => removeEnemy(enemy.id));
-      spawnBoss();
+      enemiesToRemove.forEach(enemy => {
+        try {
+          removeEnemy(enemy.id);
+        } catch (error) {
+          console.error("Failed to remove enemy before boss:", error);
+        }
+      });
+      
+      // Spawn boss after a small delay to ensure all enemies are removed
+      setTimeout(() => {
+        if (useGradius.getState().gamePhase === "playing") {
+          spawnBoss();
+        }
+      }, 100);
     }
   });
   
