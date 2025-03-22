@@ -2,13 +2,12 @@
 @tailwind components;
 @tailwind utilities;
 
-/* シンプルなゲームUIスタイル */
+/* シンプルなゲームUIスタイル - システムフォントのみ使用 */
 .pixel-font {
   font-family: monospace, 'Courier New', Courier, sans-serif !important;
   letter-spacing: -0.05em;
   font-weight: bold;
   text-transform: uppercase;
-  text-rendering: optimizeSpeed;
 }
 
 @layer base {
@@ -48,9 +47,8 @@ canvas {
   display: block !important;
 }
 
-/* HTMLエレメント内のフォント */
+/* HTMLエレメント内のフォント - システムフォントのみ使用 */
 .game-ui-element .pixel-font {
   font-family: monospace, 'Courier New', Courier, sans-serif !important;
-  text-rendering: optimizeSpeed;
   visibility: visible !important;
 }

@@ -44,14 +44,7 @@ function App() {
     aspectRatio: window.innerWidth / window.innerHeight,
   });
 
-  // fontsLoadedRefは常にtrueに設定（フォントロードを無視する）
-  const fontsLoadedRef = useRef(true);
-  
-  // フォント読み込み確認を単純化
-  useEffect(() => {
-    // システムフォントのみを使用するため、特別な読み込み処理は不要
-    console.log('Fonts loaded successfully');
-  }, []);
+  // フォントロードは完全に削除
   
   // Load and setup audio
   useEffect(() => {
@@ -126,15 +119,7 @@ function App() {
       <KeyboardControls map={keyboardMap}>
         <div 
           style={{ width: '100vw', height: '100vh', position: 'relative', overflow: 'hidden' }}
-          className={fontsLoadedRef.current ? 'fonts-loaded' : 'fonts-loading'}
         >
-          {/* フォント読み込み状態表示（開発時のみ）*/}
-          <div className="absolute top-4 left-4 z-50 text-xs opacity-50">
-            {fontsLoadedRef.current ? 
-              <span style={{ color: '#00ff00' }}>Fonts Ready</span> : 
-              <span style={{ color: '#ffff00' }}>Loading Fonts...</span>
-            }
-          </div>
           
           <button 
             onClick={toggleMute} 
