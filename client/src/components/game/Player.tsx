@@ -1,14 +1,32 @@
-import { useRef, useMemo, useEffect } from "react";
+import { useRef, useEffect, useState, Suspense, useMemo } from "react";
 import { useFrame } from "@react-three/fiber";
-import { Html } from "@react-three/drei";
+import { useGLTF, Html } from "@react-three/drei";
 import * as THREE from "three";
+import { GLTF } from "three-stdlib";
 import { useGradius } from "@/lib/stores/useGradius";
 import { PLAYER_SIZE } from "@/lib/constants";
+
+// Preload player ship model
+useGLTF.preload('/models/player_ship.glb');
 
 const Player = () => {
   const { playerPosition, isPlayerInvulnerable, weaponLevel } = useGradius();
   const playerRef = useRef<THREE.Group>(null);
   const engineGlowRef = useRef<THREE.PointLight>(null);
+  const [modelLoaded, setModelLoaded] = useState(false);
+  
+  // Load player ship model
+  const { scene: playerModel } = useGLTF('/models/player_ship.glb') as GLTF & {
+    scene: THREE.Group
+  };
+  
+  // Update model loaded state
+  useEffect(() => {
+    if (playerModel) {
+      setModelLoaded(true);
+      console.log("Player ship model loaded successfully");
+    }
+  }, [playerModel]);
   
   // For blinking when invulnerable
   useFrame((state) => {
@@ -31,6 +49,15 @@ const Player = () => {
       const pulseIntensity = 0.8 + Math.sin(state.clock.getElapsedTime() * 8) * 0.2;
       engineGlowRef.current.intensity = pulseIntensity;
     }
+    
+    // Add slight rotation based on movement for visual effect
+    if (playerRef.current && modelLoaded) {
+      // Add a small tilt when moving horizontally and vertically
+      const tiltFactor = 0.1;
+      
+      // Reset rotation to avoid accumulation
+      playerRef.current.rotation.z = Math.sin(state.clock.getElapsedTime() * 0.5) * 0.05;
+    }
   });
   
   // Weapon level indicator color
@@ -48,65 +75,25 @@ const Player = () => {
     <group
       ref={playerRef}
       position={[playerPosition[0], playerPosition[1], 0]}
-      scale={[PLAYER_SIZE, PLAYER_SIZE, PLAYER_SIZE]}
+      scale={[PLAYER_SIZE * 2.5, PLAYER_SIZE * 2.5, PLAYER_SIZE * 2.5]}
+      rotation={[0, 0, 0]}
     >
-      {/* 本体中央 - メインボディ (白) */}
-      <mesh castShadow>
-        <boxGeometry args={[0.6, 0.3, 0.1]} />
-        <meshStandardMaterial color="#FFFFFF" />
-      </mesh>
-      
-      {/* 本体前部 - 先端 (赤) */}
-      <mesh position={[0.35, 0, 0]}>
-        <boxGeometry args={[0.1, 0.2, 0.1]} />
-        <meshStandardMaterial color="#FF0000" />
-      </mesh>
-      
-      {/* 上部翼 (白) */}
-      <mesh position={[0, 0.2, 0]}>
-        <boxGeometry args={[0.4, 0.1, 0.1]} />
-        <meshStandardMaterial color="#FFFFFF" />
-      </mesh>
-      
-      {/* 下部翼 (白) */}
-      <mesh position={[0, -0.2, 0]}>
-        <boxGeometry args={[0.4, 0.1, 0.1]} />
-        <meshStandardMaterial color="#FFFFFF" />
-      </mesh>
-      
-      {/* 翼端部 上 (赤) */}
-      <mesh position={[0, 0.3, 0]}>
-        <boxGeometry args={[0.2, 0.1, 0.1]} />
-        <meshStandardMaterial color="#FF0000" />
-      </mesh>
-      
-      {/* 翼端部 下 (赤) */}
-      <mesh position={[0, -0.3, 0]}>
-        <boxGeometry args={[0.2, 0.1, 0.1]} />
-        <meshStandardMaterial color="#FF0000" />
-      </mesh>
-      
-      {/* コックピット (青) */}
-      <mesh position={[0.15, 0, 0.1]}>
-        <boxGeometry args={[0.2, 0.15, 0.05]} />
-        <meshStandardMaterial color="#00AAFF" />
-      </mesh>
-      
-      {/* エンジン部分 (グレー) */}
-      <mesh position={[-0.35, 0, 0]}>
-        <boxGeometry args={[0.1, 0.2, 0.1]} />
-        <meshStandardMaterial color="#444444" />
-      </mesh>
-      
-      {/* エンジン光 */}
-      <mesh position={[-0.45, 0, 0]}>
-        <boxGeometry args={[0.05, 0.15, 0.05]} />
-        <meshStandardMaterial 
-          color="#00FFFF" 
-          emissive="#00FFFF"
-          emissiveIntensity={2}
-        />
-      </mesh>
+      {/* 3Dモデルの宇宙船 */}
+      {modelLoaded ? (
+        <Suspense fallback={
+          <mesh castShadow>
+            <boxGeometry args={[0.6, 0.3, 0.1]} />
+            <meshStandardMaterial color="#FFFFFF" />
+          </mesh>
+        }>
+          <primitive object={playerModel.clone()} castShadow receiveShadow />
+        </Suspense>
+      ) : (
+        <mesh castShadow>
+          <boxGeometry args={[0.6, 0.3, 0.1]} />
+          <meshStandardMaterial color="#FFFFFF" />
+        </mesh>
+      )}
       
       {/* エンジン光エフェクト */}
       <pointLight 
@@ -117,13 +104,12 @@ const Player = () => {
         color="#00FFFF"
       />
       
-      {/* 武器レベルインジケーター */}
+      {/* 武器レベルインジケーター - モデルの上に表示 */}
       <group position={[0, 0.5, 0]}>
         <mesh>
           <boxGeometry args={[0.3, 0.1, 0.05]} />
           <meshBasicMaterial color="#333333" />
         </mesh>
-        {/* レベル表示のためのメッシュを直接使用 */}
         <mesh position={[0, 0, 0.1]}>
           <boxGeometry args={[0.2, 0.1, 0.01]} />
           <meshBasicMaterial color={weaponLevelColor} />
