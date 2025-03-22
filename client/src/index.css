@@ -2,41 +2,13 @@
 @tailwind components;
 @tailwind utilities;
 
-/* フォント読み込み用スタイル */
-.fonts-loading {
-  opacity: 0.8;
-  transition: opacity 0.3s ease-in-out;
-}
-
-.fonts-loaded {
-  opacity: 1;
-  transition: opacity 0.3s ease-in-out;
-}
-
-/* ピクセルアート風フォントスタイル */
+/* シンプルなゲームUIスタイル */
 .pixel-font {
-  font-family: 'Press Start 2P', 'VT323', monospace, sans-serif !important;
+  font-family: monospace, 'Courier New', Courier, sans-serif !important;
   letter-spacing: -0.05em;
-  font-weight: normal;
+  font-weight: bold;
   text-transform: uppercase;
   text-rendering: optimizeSpeed;
-}
-
-/* ブラウザが特定のフォントをロードできなかった場合のバックアッププラン */
-@font-face {
-  font-family: 'Press Start 2P';
-  src: local('Press Start 2P'), url('/fonts/PressStart2P-Regular.woff2') format('woff2');
-  font-weight: normal;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'VT323';
-  src: local('VT323'), url('/fonts/VT323-Regular.woff2') format('woff2');
-  font-weight: normal;
-  font-style: normal;
-  font-display: swap;
 }
 
 @layer base {
@@ -76,9 +48,9 @@ canvas {
   display: block !important;
 }
 
-/* HTMLエレメント内のフォントがちゃんと読み込まれるように */
+/* HTMLエレメント内のフォント */
 .game-ui-element .pixel-font {
-  font-family: 'Press Start 2P', 'VT323', monospace !important;
+  font-family: monospace, 'Courier New', Courier, sans-serif !important;
   text-rendering: optimizeSpeed;
   visibility: visible !important;
 }
