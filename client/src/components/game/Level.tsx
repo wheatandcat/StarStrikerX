@@ -84,8 +84,48 @@ const Level: React.FC<LevelProps> = ({ viewport: canvasViewport }) => {
   // ポーズキー用のエフェクト - 複数のキーの同時押下を防ぐためのフラグ
   const pauseKeyRef = useRef({
     isPressed: false, 
-    lastPressTime: 0
+    lastPressTime: 0,
+    pauseToggleInProgress: false
   });
+  
+  // ポーズトグル関数を作成 - useGradius.getState()をここで呼び出して最新の状態を取得
+  const togglePauseWrapper = () => {
+    const now = Date.now();
+    
+    // 連続したトグル操作を防ぐためのチェック
+    if (pauseKeyRef.current.pauseToggleInProgress || 
+        now - pauseKeyRef.current.lastPressTime < 300) {
+      console.log("Pause toggle skipped - too frequent or already in progress");
+      return;
+    }
+    
+    // ポーズトグル処理を開始
+    console.log("Pause key triggered - toggling pause state");
+    pauseKeyRef.current.pauseToggleInProgress = true;
+    
+    try {
+      // 現在のゲーム状態を取得
+      const currentState = useGradius.getState();
+      const currentPhase = currentState.gamePhase;
+      console.log(`Current game phase before toggle: ${currentPhase}`);
+      
+      // togglePause関数を呼び出し
+      currentState.togglePause();
+      
+      // タイムスタンプを更新
+      pauseKeyRef.current.lastPressTime = now;
+      
+      // 状態変更を確認するために少し遅延
+      setTimeout(() => {
+        const newPhase = useGradius.getState().gamePhase;
+        console.log(`Game phase after toggle: ${newPhase}`);
+        pauseKeyRef.current.pauseToggleInProgress = false;
+      }, 100);
+    } catch (error) {
+      console.error("Error during pause toggle:", error);
+      pauseKeyRef.current.pauseToggleInProgress = false;
+    }
+  };
   
   useEffect(() => {
     // ポーズキーのサブスクリプション
@@ -93,25 +133,30 @@ const Level: React.FC<LevelProps> = ({ viewport: canvasViewport }) => {
       (state) => state.pause,
       (pressed) => {
         // キーが押されたとき
-        if (pressed) {
-          const now = Date.now();
-          // 連続したトグル操作を防ぐために、前回の操作から300ms以上経過していることを確認
-          if (!pauseKeyRef.current.isPressed && now - pauseKeyRef.current.lastPressTime > 300) {
-            console.log("Pause key triggered - toggling pause state");
-            useGradius.getState().togglePause();
-            pauseKeyRef.current.isPressed = true;
-            pauseKeyRef.current.lastPressTime = now;
-          }
-        } else {
+        if (pressed && !pauseKeyRef.current.isPressed) {
+          pauseKeyRef.current.isPressed = true;
+          togglePauseWrapper();
+        } else if (!pressed) {
           // キーが離されたとき
           pauseKeyRef.current.isPressed = false;
         }
       }
     );
     
+    // ESCキーのイベントリスナーを追加 (バックアップとして)
+    const handleEscKeyPress = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        e.preventDefault();
+        togglePauseWrapper();
+      }
+    };
+    
+    window.addEventListener('keydown', handleEscKeyPress);
+    
     // クリーンアップ
     return () => {
       unsubscribePause();
+      window.removeEventListener('keydown', handleEscKeyPress);
     };
   }, [subscribeKeys]);
   

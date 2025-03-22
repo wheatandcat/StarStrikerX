@@ -276,71 +276,111 @@ const GameUI = () => {
       </Html>
       
       {/* Boss HP bar - フルスクリーン用HTML */}
-      <Html fullscreen>
-        {/* ポーズ画面 */}
-        {gamePhase === "paused" && (
-          <div style={{
-            position: 'absolute' as 'absolute',
-            top: 0,
-            left: 0,
-            width: '100%',
-            height: '100%',
-            backgroundColor: 'rgba(0, 0, 0, 0.7)',
-            display: 'flex',
-            flexDirection: 'column' as 'column',
-            justifyContent: 'center',
-            alignItems: 'center',
-            color: '#FFFFFF',
-            fontFamily: 'Arial, sans-serif',
-            zIndex: 30
-          }}>
+      {/* ポーズ画面 - 別のアプローチで実装 */}
+      {gamePhase === "paused" && (
+        <group position={[0, 0, 5]}>
+          <mesh position={[0, 0, -1]}>
+            <planeGeometry args={[50, 50]} />
+            <meshBasicMaterial color="#000000" transparent opacity={0.7} />
+          </mesh>
+          
+          <Html position={[0, 0, 0]} center transform>
             <div style={{
-              fontSize: '3rem',
-              fontWeight: 'bold',
-              marginBottom: '2rem',
-              textShadow: '0 0 10px #00AAFF, 0 0 20px #00AAFF',
-              animation: 'pulse 1.5s infinite alternate'
-            }}>
-              PAUSED
-            </div>
-            
-            <div style={{
-              fontSize: '1.2rem',
-              marginBottom: '1rem',
-              color: '#AAAAAA'
-            }}>
-              Press ESC or P to resume
-            </div>
-            
-            <div style={{
-              marginTop: '2rem',
               display: 'flex',
               flexDirection: 'column' as 'column',
-              alignItems: 'center'
+              justifyContent: 'center',
+              alignItems: 'center',
+              color: '#FFFFFF',
+              fontFamily: 'Arial, sans-serif',
+              minWidth: '300px',
+              padding: '20px',
+              backgroundColor: 'rgba(0, 0, 30, 0.8)',
+              borderRadius: '10px',
+              border: '2px solid #00AAFF',
+              boxShadow: '0 0 15px #00AAFF',
+              pointerEvents: 'all'
             }}>
               <div style={{
-                fontSize: '1rem',
-                marginBottom: '0.5rem',
-                color: '#FFFFFF'
+                fontSize: '2rem',
+                fontWeight: 'bold',
+                marginBottom: '1.5rem',
+                textShadow: '0 0 8px #00AAFF, 0 0 15px #00AAFF'
               }}>
-                SCORE: {formattedScore}
+                PAUSED
               </div>
+              
+              <button 
+                onClick={() => togglePause()}
+                style={{
+                  backgroundColor: '#00AAFF',
+                  color: 'white',
+                  padding: '8px 16px',
+                  fontSize: '1rem',
+                  fontWeight: 'bold',
+                  border: 'none',
+                  borderRadius: '4px',
+                  cursor: 'pointer',
+                  marginBottom: '1rem',
+                  boxShadow: '0 0 8px #00AAFF',
+                  transition: 'all 0.2s ease'
+                }}
+                onMouseOver={(e) => {
+                  e.currentTarget.style.backgroundColor = '#0088CC';
+                  e.currentTarget.style.boxShadow = '0 0 12px #00AAFF';
+                }}
+                onMouseOut={(e) => {
+                  e.currentTarget.style.backgroundColor = '#00AAFF';
+                  e.currentTarget.style.boxShadow = '0 0 8px #00AAFF';
+                }}
+              >
+                RESUME GAME
+              </button>
+              
               <div style={{
-                fontSize: '1rem',
-                marginBottom: '0.5rem',
-                color: '#FFFFFF'
+                fontSize: '0.9rem',
+                marginBottom: '0.8rem',
+                color: '#AAAAAA'
               }}>
-                LIVES: {lives}
+                Press ESC or P to resume
               </div>
+              
               <div style={{
-                fontSize: '1rem',
-                color: '#FFFFFF'
+                marginTop: '1rem',
+                display: 'flex',
+                flexDirection: 'column' as 'column',
+                alignItems: 'center',
+                width: '100%',
+                padding: '10px',
+                backgroundColor: 'rgba(0, 40, 80, 0.5)',
+                borderRadius: '5px'
               }}>
-                STAGE: {stageNumber}
+                <div style={{
+                  fontSize: '1rem',
+                  marginBottom: '0.5rem',
+                  color: '#FFFFFF'
+                }}>
+                  SCORE: <span style={{color: '#00FFFF'}}>{formattedScore}</span>
+                </div>
+                <div style={{
+                  fontSize: '1rem',
+                  marginBottom: '0.5rem',
+                  color: '#FFFFFF'
+                }}>
+                  LIVES: <span style={{color: '#FF5555'}}>{lives}</span>
+                </div>
+                <div style={{
+                  fontSize: '1rem',
+                  color: '#FFFFFF'
+                }}>
+                  STAGE: <span style={{color: '#FFFF00'}}>{stageNumber}</span>
+                </div>
               </div>
             </div>
-          </div>
-        )}
+          </Html>
+        </group>
+      )}
+      
+      <Html fullscreen>
         
         {/* ボス体力表示 */}
         {bossActive && (
