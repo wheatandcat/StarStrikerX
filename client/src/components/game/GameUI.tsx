@@ -1,6 +1,6 @@
-import { useEffect, useMemo } from 'react';
+import { useMemo } from 'react';
 import { useThree } from '@react-three/fiber';
-import { Html, Text } from '@react-three/drei';
+import { Text } from '@react-three/drei';
 import { useGradius } from '@/lib/stores/useGradius';
 import { WeaponLevel } from '@/lib/types';
 
@@ -32,88 +32,67 @@ const GameUI = () => {
   return (
     <group>
       {/* Score display */}
-      <Html
+      <Text
         position={[-9.5, 5, 0]}
-        wrapperClass="game-ui-element"
-        center
-        distanceFactor={10}
+        fontSize={0.4}
+        color="white"
+        anchorX="center"
+        anchorY="middle"
+        outlineWidth={0.02}
+        outlineColor="#00aaff"
       >
-        <div className="pixel-font" style={{
-          color: 'white',
-          fontSize: '16px',
-          whiteSpace: 'nowrap',
-          textShadow: '0 0 5px #00ffff, 0 0 10px #00aaff'
-        }}>
-          SCORE: {formattedScore}
-        </div>
-      </Html>
+        {`SCORE: ${formattedScore}`}
+      </Text>
       
       {/* Lives display */}
-      <Html
+      <Text
         position={[8, 5, 0]}
-        wrapperClass="game-ui-element"
-        center
-        distanceFactor={10}
+        fontSize={0.4}
+        color="white"
+        anchorX="center"
+        anchorY="middle"
+        outlineWidth={0.02}
+        outlineColor="#ff0000"
       >
-        <div className="pixel-font" style={{
-          color: 'white',
-          fontSize: '16px',
-          whiteSpace: 'nowrap',
-          textShadow: '0 0 5px #ff5555, 0 0 10px #ff0000'
-        }}>
-          LIVES: {lives}
-        </div>
-      </Html>
+        {`LIVES: ${lives}`}
+      </Text>
       
       {/* Weapon level display */}
-      <Html
+      <Text
         position={[0, 5, 0]}
-        wrapperClass="game-ui-element"
-        center
-        distanceFactor={10}
+        fontSize={0.35}
+        color="white"
+        anchorX="center"
+        anchorY="middle"
+        outlineWidth={0.02}
+        outlineColor="#00ff00"
       >
-        <div className="pixel-font" style={{
-          color: 'white',
-          fontSize: '14px',
-          whiteSpace: 'nowrap',
-          textShadow: '0 0 5px #88ff88, 0 0 10px #00ff00'
-        }}>
-          WEAPON: {weaponName}
-        </div>
-      </Html>
+        {`WEAPON: ${weaponName}`}
+      </Text>
       
       {/* Stage display */}
-      <Html
+      <Text
         position={[-5, 5, 0]}
-        wrapperClass="game-ui-element"
-        center
-        distanceFactor={10}
+        fontSize={0.35}
+        color="white"
+        anchorX="center"
+        anchorY="middle"
+        outlineWidth={0.02}
+        outlineColor="#ffff00"
       >
-        <div className="pixel-font" style={{
-          color: 'white',
-          fontSize: '14px',
-          whiteSpace: 'nowrap',
-          textShadow: '0 0 5px #ffff88, 0 0 10px #ffff00'
-        }}>
-          STAGE: {stageNumber}
-        </div>
-      </Html>
+        {`STAGE: ${stageNumber}`}
+      </Text>
       
       {/* Controls help at bottom */}
-      <Html
+      <Text
         position={[0, -5.3, 0]}
-        wrapperClass="game-ui-element"
-        center
-        distanceFactor={10}
+        fontSize={0.25}
+        color="rgba(255, 255, 255, 0.7)"
+        anchorX="center"
+        anchorY="middle"
       >
-        <div className="pixel-font" style={{
-          color: 'rgba(255, 255, 255, 0.7)',
-          fontSize: '10px',
-          whiteSpace: 'nowrap',
-        }}>
-          ARROWS/WASD: MOVE ・ SPACE: SHOOT ・ ESC/P: PAUSE
-        </div>
-      </Html>
+        ARROWS/WASD: MOVE ・ SPACE: SHOOT ・ ESC/P: PAUSE
+      </Text>
     </group>
   );
 };

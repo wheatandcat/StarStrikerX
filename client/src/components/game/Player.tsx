@@ -123,17 +123,11 @@ const Player = () => {
           <boxGeometry args={[0.3, 0.1, 0.05]} />
           <meshBasicMaterial color="#333333" />
         </mesh>
-        {/* テキストの代わりにHTML要素を使用 */}
-        <Html position={[0, 0, 0.1]} center distanceFactor={10}>
-          <div className="pixel-font" style={{
-            color: weaponLevelColor,
-            fontSize: '14px',
-            fontWeight: 'bold',
-            textShadow: '0 0 3px rgba(0,0,0,0.5)'
-          }}>
-            L{weaponLevel + 1}
-          </div>
-        </Html>
+        {/* レベル表示のためのメッシュを直接使用 */}
+        <mesh position={[0, 0, 0.1]}>
+          <boxGeometry args={[0.2, 0.1, 0.01]} />
+          <meshBasicMaterial color={weaponLevelColor} />
+        </mesh>
       </group>
     </group>
   );
