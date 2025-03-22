@@ -8,9 +8,27 @@ import { Controls } from "@/lib/types";
 
 // レトロな2Dスタイルのプレイヤー
 const Player = () => {
-  const { playerPosition, isPlayerInvulnerable, weaponLevel } = useGradius();
+  const { 
+    playerPosition, 
+    isPlayerInvulnerable, 
+    weaponLevel,
+    gamePhase,
+    togglePause
+  } = useGradius();
   const playerRef = useRef<THREE.Group>(null);
   const engineRef = useRef<THREE.Mesh>(null);
+  
+  // ポーズ機能の制御
+  const pausePressed = useKeyboardControls<Controls>(state => state.pause);
+  
+  // ポーズキー（ESCまたはP）が押されたらトグル
+  useEffect(() => {
+    // pausePressedが変更された時（キーが押された時）のみ実行
+    if (pausePressed) {
+      console.log("Pause key pressed");
+      togglePause();
+    }
+  }, [pausePressed, togglePause]);
   
   // For blinking when invulnerable
   useFrame((state) => {

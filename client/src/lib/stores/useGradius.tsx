@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { subscribeWithSelector } from "zustand/middleware";
-import { PowerUpType, GamePhase, WeaponLevel } from "../types";
+import { PowerUpType, GamePhase, WeaponLevel, EnemyType } from "../types";
+import { useAudio } from "./useAudio";
 
 interface GradiusState {
   // Game state
@@ -102,12 +103,16 @@ export const useGradius = create<GradiusState>()(
     // ポーズ機能も初期ステートで定義
     togglePause: () => {
       const { gamePhase } = get();
+      const audioStore = useAudio.getState();
+      
       // ゲームプレイ中のみポーズ可能
       if (gamePhase === "playing") {
         set({ gamePhase: "paused" });
+        audioStore.pauseAllSounds(); // 全ての音を一時停止
         console.log("Game paused");
       } else if (gamePhase === "paused") {
         set({ gamePhase: "playing" });
+        audioStore.resumeBackgroundMusic(); // BGM再開
         console.log("Game resumed");
       }
     },

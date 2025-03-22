@@ -15,6 +15,8 @@ interface AudioState {
   toggleMute: () => void;
   playHit: () => void;
   playSuccess: () => void;
+  pauseAllSounds: () => void;
+  resumeBackgroundMusic: () => void;
 }
 
 export const useAudio = create<AudioState>((set, get) => ({
@@ -69,6 +71,37 @@ export const useAudio = create<AudioState>((set, get) => ({
       successSound.play().catch(error => {
         console.log("Success sound play prevented:", error);
       });
+    }
+  },
+  
+  pauseAllSounds: () => {
+    const { backgroundMusic, hitSound, successSound } = get();
+    
+    // ポーズ中はすべての音を停止
+    if (backgroundMusic && !backgroundMusic.paused) {
+      backgroundMusic.pause();
+      console.log("Background music paused");
+    }
+    
+    // 他の効果音も一時停止（実行中のものがあれば）
+    if (hitSound) {
+      hitSound.pause();
+    }
+    
+    if (successSound) {
+      successSound.pause();
+    }
+  },
+  
+  resumeBackgroundMusic: () => {
+    const { backgroundMusic, isMuted } = get();
+    
+    // ミュート設定でなければBGMを再開
+    if (backgroundMusic && !isMuted) {
+      backgroundMusic.play().catch(error => {
+        console.log("Background music resume prevented:", error);
+      });
+      console.log("Background music resumed");
     }
   }
 }));
