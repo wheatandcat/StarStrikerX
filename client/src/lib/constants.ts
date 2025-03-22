@@ -13,7 +13,7 @@ export const PLAYER_COLLISION_RADIUS = 0.4;
 
 // Enemy constants
 export const ENEMY_SPAWN_RATE = 1000; // ms
-export const ENEMY_BULLET_SPEED = 0.2;
+export const ENEMY_BULLET_SPEED = 0.1; // 遅くした
 export const ENEMY_SHOOT_RATE = 2000; // ms
 export const ENEMY_MOVEMENT_SPEED = 0.05;
 export const ENEMY_POWERUP_DROP_CHANCE = 0.2; // 20% chance
