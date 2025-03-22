@@ -205,20 +205,27 @@ const Level: React.FC<LevelProps> = ({ viewport: canvasViewport }) => {
             removeBullet(bullet.id);
             
             // Damage enemy or remove if health depleted
-            enemy.health -= 1;
+            const newHealth = enemy.health - 1;
             
-            if (enemy.health <= 0) {
+            if (newHealth <= 0) {
+              // Store the position before removing the enemy
+              const enemyPosition: [number, number] = [...enemy.position];
+              
+              // Remove the enemy first
               removeEnemy(enemy.id);
               incrementScore(enemyProps.scoreValue);
               playHit();
               
-              // Chance to spawn power-up
+              // Use the stored position for power-up spawning
               if (shouldDropPowerUp()) {
-                spawnPowerUp(enemy.position);
+                spawnPowerUp(enemyPosition);
               }
               
               // Track defeated enemies for boss spawn
               defeatedEnemiesRef.current += 1;
+            } else {
+              // Only update health if enemy is still alive
+              enemy.health = newHealth;
             }
           }
         });
