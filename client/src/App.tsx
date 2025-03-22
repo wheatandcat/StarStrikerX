@@ -1,5 +1,5 @@
 import { Canvas } from "@react-three/fiber";
-import { Suspense, useEffect, useState } from "react";
+import { Suspense, useEffect, useState, useRef } from "react";
 import { KeyboardControls } from "@react-three/drei";
 import { useAudio } from "./lib/stores/useAudio";
 import { QueryClientProvider } from "@tanstack/react-query";
@@ -11,7 +11,7 @@ import GameOverScreen from "./components/ui/GameOverScreen";
 import StageClearScreen from "./components/ui/StageClearScreen";
 import LeaderboardModal from "./components/ui/LeaderboardModal";
 import { useGradius } from "./lib/stores/useGradius";
-// Removed inter font import in favor of using the pixel-font class
+// フォント読み込み確認用
 
 // Define control keys for the game
 const keyboardMap = [
@@ -44,6 +44,29 @@ function App() {
     aspectRatio: window.innerWidth / window.innerHeight,
   });
 
+  // フォント読み込み状態の確認
+  const fontsLoadedRef = useRef(false);
+  
+  // フォント読み込み確認
+  useEffect(() => {
+    const checkFontsLoaded = async () => {
+      try {
+        if ('fonts' in document) {
+          await Promise.all([
+            (document as any).fonts.load('1em "Press Start 2P"'),
+            (document as any).fonts.load('1em "VT323"')
+          ]);
+          console.log('App component: Fonts loaded successfully!');
+          fontsLoadedRef.current = true;
+        }
+      } catch (err) {
+        console.error('Error loading fonts in App component:', err);
+      }
+    };
+    
+    checkFontsLoaded();
+  }, []);
+  
   // Load and setup audio
   useEffect(() => {
     const music = new Audio("/sounds/background.mp3");
@@ -115,11 +138,22 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <KeyboardControls map={keyboardMap}>
-        <div style={{ width: '100vw', height: '100vh', position: 'relative', overflow: 'hidden' }}>
+        <div 
+          style={{ width: '100vw', height: '100vh', position: 'relative', overflow: 'hidden' }}
+          className={fontsLoadedRef.current ? 'fonts-loaded' : 'fonts-loading'}
+        >
+          {/* フォント読み込み状態表示（開発時のみ）*/}
+          <div className="absolute top-4 left-4 z-50 text-xs opacity-50">
+            {fontsLoadedRef.current ? 
+              <span style={{ color: '#00ff00' }}>Fonts Ready</span> : 
+              <span style={{ color: '#ffff00' }}>Loading Fonts...</span>
+            }
+          </div>
+          
           <button 
             onClick={toggleMute} 
             className="absolute top-4 right-4 z-50 px-3 py-2 bg-gray-800 text-white rounded-full pixel-font"
-            style={{ fontSize: '12px' }}
+            style={{ fontSize: '12px', fontFamily: 'monospace' }}
           >
             {isMuted ? "🔇" : "🔊"}
           </button>

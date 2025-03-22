@@ -2,25 +2,24 @@
 @tailwind components;
 @tailwind utilities;
 
-/* ピクセルアート風フォント設定 - Google Fontsから読み込み済み */
-@font-face {
-  font-family: 'Pixel';
-  src: local('Press Start 2P'),
-       local('VT323'),
-       local('Courier New'), 
-       local('Courier'), 
-       local('monospace');
-  font-weight: normal;
-  font-style: normal;
-  font-display: swap;
+/* フォント読み込み用スタイル */
+.fonts-loading {
+  opacity: 0.8;
+  transition: opacity 0.3s ease-in-out;
+}
+
+.fonts-loaded {
+  opacity: 1;
+  transition: opacity 0.3s ease-in-out;
 }
 
 /* ピクセルアート風フォントスタイル */
 .pixel-font {
-  font-family: 'Press Start 2P', 'VT323', 'Pixel', monospace;
+  font-family: 'Press Start 2P', 'VT323', monospace;
   letter-spacing: -0.05em;
-  font-weight: bold;
+  font-weight: normal;
   text-transform: uppercase;
+  text-rendering: optimizeSpeed;
 }
 
 @layer base {
@@ -48,4 +47,21 @@ canvas {
   width: 100% !important;
   height: 100% !important;
   touch-action: none;
+}
+
+/* ゲームUI要素用スタイル */
+.game-ui-element {
+  transform-origin: center center;
+  pointer-events: none;
+  user-select: none;
+  will-change: transform;
+  visibility: visible !important;
+  display: block !important;
+}
+
+/* HTMLエレメント内のフォントがちゃんと読み込まれるように */
+.game-ui-element .pixel-font {
+  font-family: 'Press Start 2P', 'VT323', monospace !important;
+  text-rendering: optimizeSpeed;
+  visibility: visible !important;
 }
