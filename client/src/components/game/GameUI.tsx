@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { useThree } from '@react-three/fiber';
-import { Text } from '@react-three/drei';
+import { Text, Html } from '@react-three/drei';
 import { useGradius } from '@/lib/stores/useGradius';
 import { WeaponLevel } from '@/lib/types';
 
@@ -54,6 +54,7 @@ const GameUI = () => {
         anchorY="middle"
         outlineWidth={0.02}
         outlineColor="#ff0000"
+        font="/fonts/VT323-Regular.ttf"
       >
         {`LIVES: ${lives}`}
       </Text>
@@ -67,6 +68,7 @@ const GameUI = () => {
         anchorY="middle"
         outlineWidth={0.02}
         outlineColor="#00ff00"
+        font="/fonts/VT323-Regular.ttf"
       >
         {`WEAPON: ${weaponName}`}
       </Text>
@@ -80,20 +82,21 @@ const GameUI = () => {
         anchorY="middle"
         outlineWidth={0.02}
         outlineColor="#ffff00"
+        font="/fonts/VT323-Regular.ttf"
       >
         {`STAGE: ${stageNumber}`}
       </Text>
       
-      {/* Controls help at bottom */}
-      <Text
-        position={[0, -5.3, 0]}
-        fontSize={0.25}
-        color="rgba(255, 255, 255, 0.7)"
-        anchorX="center"
-        anchorY="middle"
-      >
-        ARROWS/WASD: MOVE ・ SPACE: SHOOT ・ ESC/P: PAUSE
-      </Text>
+      {/* Controls help at bottom - HTML版に変更 */}
+      <Html position={[0, -5.3, 0]} transform center>
+        <div className="pixel-font text-center" style={{ 
+          color: 'rgba(255, 255, 255, 0.7)', 
+          fontSize: '0.6rem',
+          whiteSpace: 'nowrap'
+        }}>
+          ARROWS/WASD: MOVE ・ SPACE: SHOOT ・ ESC/P: PAUSE
+        </div>
+      </Html>
     </group>
   );
 };
