@@ -1,8 +1,9 @@
-import { useRef } from "react";
+import { useRef, useEffect } from "react";
 import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
 import { Html } from "@react-three/drei";
 import { useGradius } from "@/lib/stores/useGradius";
+import { useAudio } from "@/lib/stores/useAudio";
 import { PowerUpType } from "@/lib/types";
 import { POWERUP_SIZE } from "@/lib/constants";
 
@@ -172,6 +173,32 @@ const PowerUp = ({ powerUp }: { powerUp: any }) => {
 
 const PowerUps = () => {
   const { powerUps } = useGradius();
+  const { playWeaponUpgrade } = useAudio();
+  
+  // パワーアップ取得時の効果音
+  const previousPowerUpsRef = useRef<Record<string, boolean>>({});
+  
+  useEffect(() => {
+    const currentPowerUpIds: Record<string, boolean> = {};
+    
+    // 現在のパワーアップをマーク
+    powerUps.forEach(powerUp => {
+      currentPowerUpIds[powerUp.id] = true;
+    });
+    
+    // 前フレームにあったが現在のフレームにないパワーアップを検出
+    // これは取得されたことを意味する
+    Object.keys(previousPowerUpsRef.current).forEach(id => {
+      if (!currentPowerUpIds[id]) {
+        // パワーアップが取得された、効果音を再生
+        playWeaponUpgrade();
+        console.log(`PowerUp ${id} collected`);
+      }
+    });
+    
+    // 前フレームの参照を更新
+    previousPowerUpsRef.current = currentPowerUpIds;
+  }, [powerUps, playWeaponUpgrade]);
   
   return (
     <group>
