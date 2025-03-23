@@ -149,6 +149,10 @@ export const useGradius = create<GradiusState>()(
     },
     
     restartGame: () => {
+      // ゲーム再開時に通常BGMに設定
+      const audioStore = useAudio.getState();
+      audioStore.switchToNormalMusic();
+      
       set({
         gamePhase: "playing",
         stageNumber: 1,
@@ -168,6 +172,10 @@ export const useGradius = create<GradiusState>()(
     
     continueToNextStage: () => {
       const { stageNumber } = get();
+      const audioStore = useAudio.getState();
+      
+      // 次のステージ開始時に通常BGMを設定
+      audioStore.switchToNormalMusic();
       
       set({
         gamePhase: "playing",
@@ -189,6 +197,13 @@ export const useGradius = create<GradiusState>()(
     },
     
     stageClear: () => {
+      // ステージクリア時に通常BGMに戻す
+      const audioStore = useAudio.getState();
+      if (audioStore.currentMusic === "boss") {
+        console.log("Stage clear: switching back to normal music");
+        audioStore.switchToNormalMusic();
+      }
+      
       set({ gamePhase: "stageClear" });
       console.log("Stage clear");
     },
