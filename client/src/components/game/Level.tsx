@@ -71,6 +71,7 @@ const Level: React.FC<LevelProps> = ({ viewport: canvasViewport }) => {
   const { 
     playHit, 
     playSuccess, 
+    playEnemyDestroy,
     switchToBossMusic, 
     switchToNormalMusic 
   } = useAudio();
@@ -327,7 +328,7 @@ const Level: React.FC<LevelProps> = ({ viewport: canvasViewport }) => {
                 // Flag enemy for removal, increment score
                 removeEnemy(enemyId);
                 incrementScore(enemyProps.scoreValue);
-                playHit();
+                playEnemyDestroy();
                 
                 // Use the stored position for power-up spawning
                 if (shouldDropPowerUp()) {

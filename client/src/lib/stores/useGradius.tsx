@@ -291,6 +291,10 @@ export const useGradius = create<GradiusState>()(
           weaponLevel: Math.max(get().weaponLevel - 1, WeaponLevel.Single) as WeaponLevel // Lose one weapon level
         });
         
+        // 無敵状態になった時にシールド効果音を再生
+        const audioStore = useAudio.getState();
+        audioStore.playShield();
+        
         // Reset invulnerability after 2 seconds - using a safer approach
         const invulnerabilityTimer = window.setTimeout(() => {
           // Only reset if the game is still in the playing state
@@ -313,6 +317,11 @@ export const useGradius = create<GradiusState>()(
         // Maximum weapon level is Ultimate (3)
         const newLevel = Math.min(weaponLevel + 1, WeaponLevel.Ultimate) as WeaponLevel;
         set({ weaponLevel: newLevel });
+        
+        // 武器アップグレード時に効果音を再生
+        const audioStore = useAudio.getState();
+        audioStore.playWeaponUpgrade();
+        
         console.log(`Weapon upgraded to level ${newLevel}`);
       }
     },
