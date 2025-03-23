@@ -1,7 +1,8 @@
-import { useRef } from "react";
+import { useRef, useEffect } from "react";
 import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
 import { useGradius } from "@/lib/stores/useGradius";
+import { useAudio } from "@/lib/stores/useAudio";
 import { EnemyType } from "@/lib/types";
 import { getEnemyProperties } from "@/lib/gameUtils";
 
@@ -393,6 +394,35 @@ const Enemy = ({ enemy }: { enemy: any }) => {
 
 const Enemies = () => {
   const { enemies } = useGradius();
+  const { playEnemyDestroy } = useAudio();
+  
+  // Keep track of current enemies to detect when one is destroyed
+  const previousEnemiesRef = useRef<Record<string, boolean>>({});
+  
+  // Detection for enemy destruction and sound effect
+  useEffect(() => {
+    const currentEnemyIds: Record<string, boolean> = {};
+    
+    // Mark all current enemies
+    enemies.forEach(enemy => {
+      if (enemy.type !== EnemyType.Boss) {
+        currentEnemyIds[enemy.id] = true;
+      }
+    });
+    
+    // Find enemies that were in the previous frame but not in this one
+    // This means they were destroyed
+    Object.keys(previousEnemiesRef.current).forEach(id => {
+      if (!currentEnemyIds[id]) {
+        // Enemy was destroyed, play sound effect
+        playEnemyDestroy();
+        console.log(`Enemy ${id} destroyed`);
+      }
+    });
+    
+    // Update previous enemies reference
+    previousEnemiesRef.current = currentEnemyIds;
+  }, [enemies, playEnemyDestroy]);
   
   return (
     <group>

@@ -1,18 +1,46 @@
-import { useRef, useMemo } from "react";
+import { useRef, useMemo, useEffect } from "react";
 import { useFrame } from "@react-three/fiber";
+import { useKeyboardControls } from "@react-three/drei";
 import * as THREE from "three";
 import { useGradius } from "@/lib/stores/useGradius";
-import { PLAYER_SIZE } from "@/lib/constants";
+import { useAudio } from "@/lib/stores/useAudio";
+import { Controls } from "@/lib/types";
+import { PLAYER_SIZE, PLAYER_SHOOT_COOLDOWN } from "@/lib/constants";
 
 // レトロな2Dスタイルのプレイヤー
 const Player = () => {
   const { 
     playerPosition, 
     isPlayerInvulnerable, 
-    weaponLevel
+    weaponLevel,
+    gamePhase,
+    shootBullet
   } = useGradius();
+  const { playPlayerShoot } = useAudio();
   const playerRef = useRef<THREE.Group>(null);
   const engineRef = useRef<THREE.Mesh>(null);
+  const lastShootTime = useRef<number>(0);
+  
+  // Get the shoot button state from keyboard controls
+  const shootPressed = useKeyboardControls<Controls>(state => state.shoot);
+  
+  // Handle shooting with sound effect
+  useEffect(() => {
+    if (!shootPressed || gamePhase !== "playing") return;
+    
+    const currentTime = Date.now();
+    // Check cooldown to prevent too frequent shots
+    if (currentTime - lastShootTime.current > PLAYER_SHOOT_COOLDOWN) {
+      // Play shooting sound
+      playPlayerShoot();
+      
+      // Shoot bullet (implemented in useGradius store)
+      shootBullet();
+      
+      // Update last shoot time
+      lastShootTime.current = currentTime;
+    }
+  }, [shootPressed, gamePhase, shootBullet, playPlayerShoot]);
   
   // Note: ポーズ機能の制御はLevel.tsxで行うため、
   // この部分は削除しました (重複操作を防ぐため)
