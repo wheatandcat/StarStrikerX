@@ -39,7 +39,19 @@ function App() {
   } = useGradius();
   const [bgMusic, setBgMusic] = useState<HTMLAudioElement | null>(null);
   const [bossBgMusic, setBossBgMusic] = useState<HTMLAudioElement | null>(null);
-  const { toggleMute, isMuted, setBackgroundMusic, setBossMusic, switchToNormalMusic } = useAudio();
+  const { 
+    toggleMute, 
+    isMuted, 
+    setBackgroundMusic, 
+    setBossMusic, 
+    setHitSound,
+    setSuccessSound,
+    setWeaponUpgradeSound,
+    setShieldSound,
+    setPlayerShootSound,
+    setEnemyDestroySound,
+    switchToNormalMusic 
+  } = useAudio();
   const [viewport, setViewport] = useState({
     fov: 60,
     aspectRatio: window.innerWidth / window.innerHeight,
@@ -66,9 +78,31 @@ function App() {
     // 効果音のロード
     const hitSound = new Audio("/sounds/hit.mp3");
     hitSound.volume = 0.3;
+    setHitSound(hitSound);
     
     const successSound = new Audio("/sounds/success.mp3");
     successSound.volume = 0.5;
+    setSuccessSound(successSound);
+    
+    // 武器アップグレード効果音
+    const weaponUpgradeSound = new Audio("/sounds/weapon_upgrade.mp3");
+    weaponUpgradeSound.volume = 0.5;
+    setWeaponUpgradeSound(weaponUpgradeSound);
+    
+    // シールド効果音
+    const shieldSound = new Audio("/sounds/shield.mp3");
+    shieldSound.volume = 0.4;
+    setShieldSound(shieldSound);
+    
+    // プレイヤー射撃効果音
+    const playerShootSound = new Audio("/sounds/player_shoot.mp3");
+    playerShootSound.volume = 0.2;
+    setPlayerShootSound(playerShootSound);
+    
+    // 敵撃破効果音
+    const enemyDestroySound = new Audio("/sounds/enemy_destroy.mp3");
+    enemyDestroySound.volume = 0.4;
+    setEnemyDestroySound(enemyDestroySound);
     
     // ゲーム開始時に通常BGMを設定
     switchToNormalMusic();
@@ -83,7 +117,17 @@ function App() {
         bossMusic.currentTime = 0;
       }
     };
-  }, [setBackgroundMusic, setBossMusic, switchToNormalMusic]);
+  }, [
+    setBackgroundMusic, 
+    setBossMusic, 
+    setHitSound,
+    setSuccessSound,
+    setWeaponUpgradeSound,
+    setShieldSound,
+    setPlayerShootSound,
+    setEnemyDestroySound,
+    switchToNormalMusic
+  ]);
   
   // ゲーム状態に応じたBGM制御
   useEffect(() => {
