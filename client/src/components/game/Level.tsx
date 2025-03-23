@@ -68,7 +68,12 @@ const Level: React.FC<LevelProps> = ({ viewport: canvasViewport }) => {
   } = useGradius();
   
   // Sound effects
-  const { playHit, playSuccess } = useAudio();
+  const { 
+    playHit, 
+    playSuccess, 
+    switchToBossMusic, 
+    switchToNormalMusic 
+  } = useAudio();
   
   // References for timers and game loop
   const lastShootTimeRef = useRef<number>(0);
@@ -163,10 +168,17 @@ const Level: React.FC<LevelProps> = ({ viewport: canvasViewport }) => {
   // Create a ref to track boss active state to avoid stale closures
   const isBossActiveRef = useRef(bossActive);
   
-  // Update the ref when bossActive changes
+  // Update the ref when bossActive changes and manage boss music
   useEffect(() => {
+    const prevBossActive = isBossActiveRef.current;
     isBossActiveRef.current = bossActive;
-  }, [bossActive]);
+    
+    // ボスが倒されたときに通常BGMに戻す
+    if (prevBossActive && !bossActive) {
+      console.log("Boss defeated, switching back to normal music");
+      switchToNormalMusic();
+    }
+  }, [bossActive, switchToNormalMusic]);
   
   // Create and manage enemy spawning interval
   useEffect(() => {
@@ -523,6 +535,9 @@ const Level: React.FC<LevelProps> = ({ viewport: canvasViewport }) => {
               setTimeout(() => {
                 if (useGradius.getState().gamePhase === "playing") {
                   spawnBoss();
+                  // ボス登場時にBGMを切り替える
+                  switchToBossMusic();
+                  console.log("Switched to boss battle music");
                 }
               }, 100);
             }

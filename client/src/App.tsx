@@ -38,7 +38,8 @@ function App() {
     setShowLeaderboard 
   } = useGradius();
   const [bgMusic, setBgMusic] = useState<HTMLAudioElement | null>(null);
-  const { toggleMute, isMuted, setBackgroundMusic } = useAudio();
+  const [bossBgMusic, setBossBgMusic] = useState<HTMLAudioElement | null>(null);
+  const { toggleMute, isMuted, setBackgroundMusic, setBossMusic, switchToNormalMusic } = useAudio();
   const [viewport, setViewport] = useState({
     fov: 60,
     aspectRatio: window.innerWidth / window.innerHeight,
@@ -48,36 +49,65 @@ function App() {
   
   // Load and setup audio
   useEffect(() => {
+    // 通常BGMのロード
     const music = new Audio("/sounds/background.mp3");
     music.loop = true;
     music.volume = 0.5;
     setBgMusic(music);
     setBackgroundMusic(music);
     
+    // ボス戦用BGMのロード
+    const bossMusic = new Audio("/sounds/boss.mp3");
+    bossMusic.loop = true;
+    bossMusic.volume = 0.6;
+    setBossBgMusic(bossMusic);
+    setBossMusic(bossMusic);
+    
+    // 効果音のロード
     const hitSound = new Audio("/sounds/hit.mp3");
     hitSound.volume = 0.3;
     
     const successSound = new Audio("/sounds/success.mp3");
     successSound.volume = 0.5;
     
+    // ゲーム開始時に通常BGMを設定
+    switchToNormalMusic();
+    
     return () => {
       if (music) {
         music.pause();
         music.currentTime = 0;
       }
+      if (bossMusic) {
+        bossMusic.pause();
+        bossMusic.currentTime = 0;
+      }
     };
-  }, [setBackgroundMusic]);
+  }, [setBackgroundMusic, setBossMusic, switchToNormalMusic]);
   
-  // Play background music when game starts
+  // ゲーム状態に応じたBGM制御
   useEffect(() => {
-    if (bgMusic && gamePhase === "playing" && !isMuted) {
-      bgMusic.play().catch(error => {
-        console.log("Background music play prevented:", error);
-      });
-    } else if (bgMusic && gamePhase !== "playing") {
-      bgMusic.pause();
+    const { isMuted, currentMusic } = useAudio.getState();
+    
+    // ゲーム開始時（メニューからプレイへの移行時）に通常BGMを設定
+    if (gamePhase === "playing" && !isMuted) {
+      if (currentMusic === null) {
+        switchToNormalMusic();
+      }
+    } 
+    // ゲームが一時停止または終了した場合はBGMを停止
+    else if (gamePhase !== "playing") {
+      const { backgroundMusic, bossMusic } = useAudio.getState();
+      
+      if (backgroundMusic && !backgroundMusic.paused) {
+        backgroundMusic.pause();
+      }
+      
+      if (bossMusic && !bossMusic.paused) {
+        bossMusic.pause();
+      }
     }
-  }, [bgMusic, gamePhase, isMuted]);
+  }, [gamePhase, switchToNormalMusic]);
   
   // Handle window resize to update viewport
   useEffect(() => {
