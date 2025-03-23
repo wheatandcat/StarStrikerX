@@ -65,6 +65,22 @@ const Boss = () => {
     }
   }, [bossHealth, maxHealth, currentAttackPattern]);
   
+  // ボスが入場後に攻撃を開始するまでの遅延（ミリ秒）
+  const [attackDelay] = useState(2000); // 2秒の遅延
+  const [canAttack, setCanAttack] = useState(false);
+  
+  // ボスが戦闘位置に到達したら攻撃遅延タイマーを開始
+  useEffect(() => {
+    if (!isEntering && !canAttack) {
+      const timer = setTimeout(() => {
+        setCanAttack(true);
+        console.log("Boss is now ready to attack!");
+      }, attackDelay);
+      
+      return () => clearTimeout(timer);
+    }
+  }, [isEntering, canAttack, attackDelay]);
+  
   useFrame(({ clock }) => {
     if (!meshRef.current) return;
     
@@ -97,8 +113,8 @@ const Boss = () => {
       meshRef.current.position.x = newX;
       meshRef.current.position.y = newY;
       
-      // Shoot bullets based on the current pattern and time interval
-      if (time - lastShootTime > BOSS_SHOOT_RATE / 1000) {
+      // ボスが攻撃可能な状態になってから弾を発射
+      if (canAttack && time - lastShootTime > BOSS_SHOOT_RATE / 1000) {
         shootBullets();
         setLastShootTime(time);
       }
