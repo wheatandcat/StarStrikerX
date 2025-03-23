@@ -4,12 +4,12 @@ import { Html } from '@react-three/drei';
 import { useGradius } from '@/lib/stores/useGradius';
 import { WeaponLevel } from '@/lib/types';
 
-// ボスのHP表示用のスタイル
+// ボスのHP表示用のスタイル - 左側に移動
 const bossHpStyles = {
   container: {
     position: 'absolute' as 'absolute',
     top: '5%',  // 上部に配置
-    right: '2%', // 右寄せに変更
+    left: '2%',  // 左寄せに変更
     width: '30%', // 横幅を小さく
     maxWidth: '200px',
     borderRadius: '4px',
@@ -67,7 +67,7 @@ const bossHpStyles = {
   percent: {
     fontSize: '0.6rem',
     marginTop: '1px',
-    textAlign: 'right' as 'right',
+    textAlign: 'center' as 'center',
     fontWeight: 'bold'
   }
 };
