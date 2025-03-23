@@ -152,7 +152,7 @@ function App() {
             />
             
             <Suspense fallback={null}>
-              {gamePhase === "playing" && <Level viewport={viewport} />}
+              {(gamePhase === "playing" || gamePhase === "paused") && <Level viewport={viewport} />}
             </Suspense>
           </Canvas>
           
@@ -179,6 +179,35 @@ function App() {
               score={score} 
               onContinue={continueToNextStage} 
             />
+          )}
+          
+          {/* ポーズ画面 - App.tsxで直接実装（Three.jsの外に配置） */}
+          {gamePhase === "paused" && (
+            <div className="absolute inset-0 z-50 bg-black bg-opacity-70 flex items-center justify-center">
+              <div className="bg-blue-900 bg-opacity-80 p-8 rounded-xl border-2 border-blue-400 shadow-lg shadow-blue-500/50 max-w-md w-full">
+                <h2 className="text-4xl font-bold text-center mb-6 text-blue-300 drop-shadow-[0_0_5px_rgba(59,130,246,0.7)]">PAUSED</h2>
+                
+                <button 
+                  onClick={() => useGradius.getState().togglePause()}
+                  className="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-6 rounded-md mb-4 transition-all duration-200 shadow-md hover:shadow-lg"
+                >
+                  RESUME GAME
+                </button>
+                
+                <p className="text-gray-300 text-center mb-6 text-sm">Press ESC or P to resume</p>
+                
+                <div className="bg-blue-950 bg-opacity-70 p-4 rounded-md">
+                  <div className="flex justify-between items-center mb-2">
+                    <span className="text-white">SCORE:</span>
+                    <span className="text-cyan-300 font-bold">{score.toLocaleString()}</span>
+                  </div>
+                  <div className="flex justify-between items-center mb-2">
+                    <span className="text-white">LIVES:</span>
+                    <span className="text-red-400 font-bold">{lives}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
           )}
           
           {showLeaderboard && (

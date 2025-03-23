@@ -203,7 +203,10 @@ const Level: React.FC<LevelProps> = ({ viewport: canvasViewport }) => {
   
   // Main game loop
   useFrame((state, delta) => {
-    if (gamePhase !== "playing") return;
+    // ポーズ中は処理をスキップ
+    if (gamePhase !== "playing") {
+      return;
+    }
     
     // Handle player input
     const keys = getKeys();
